@@ -94,3 +94,103 @@ button {
 button:hover {
     opacity: 0.95;
 }
+
+:root {
+    --bg-main: #0f172a;
+    --bg-soft: rgba(255, 255, 255, 0.76);
+    --accent: #4f46e5;
+    --accent-strong: #06b6d4;
+    --border-soft: rgba(148, 163, 184, 0.28);
+}
+
+body {
+    background:
+        radial-gradient(circle at top, rgba(79, 70, 229, 0.24), transparent 24%),
+        linear-gradient(180deg, #020617, #030712 38%, #f8fafc 38%, #f8fafc 100%);
+    min-height: 100vh;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    background: rgba(18, 27, 44, 0.84);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+}
+
+nav a {
+    padding: 8px 10px;
+    border-radius: 999px;
+    transition: all 0.25s ease;
+}
+
+nav a:hover {
+    background: rgba(255, 255, 255, 0.14);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+main {
+    background: var(--bg-soft);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.16);
+}
+
+.message {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    border-left: 4px solid currentColor;
+}
+
+form {
+    background: rgba(255, 255, 255, 0.68);
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+input {
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.16);
+    transform: translateY(-1px);
+}
+
+button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(6, 182, 212, 0.28);
+}
+
+h1 {
+    background: linear-gradient(90deg, #0f172a, #4f46e5, #06b6d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+main::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    pointer-events: none;
+}
+
+main {
+    position: relative;
+    overflow: hidden;
+}
