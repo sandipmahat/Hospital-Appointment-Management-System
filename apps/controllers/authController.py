@@ -5,7 +5,7 @@ from apps.database import get_connection
 
 # ---------------- HOME PAGE ----------------
 def home():
-    return render_template("home.html")
+    return render_template("index.html")
 
 
 # ---------------- CONTACT PAGE ----------------

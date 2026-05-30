@@ -26,5 +26,10 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+    
+    <!-- JavaScript Modules -->
+    <script src="{{ url_for('static', filename='js/events-alerts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

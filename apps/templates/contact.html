@@ -3,6 +3,160 @@
 {% block title %}Contact{% endblock %}
 
 {% block content %}
-    <h1>Contact</h1>
-    <p>Send us a message by email or use the links in the navigation above.</p>
+    <h1>Contact Management</h1>
+    <p>Manage your contacts and send messages.</p>
+    
+    <div class="contact-form-container">
+        <h2>Add New Contact</h2>
+        <form id="contactForm" method="post">
+            <div class="form-group">
+                <label for="contactName">Contact Name</label>
+                <input type="text" id="contactName" name="contactName" 
+                       data-validate="required,name"
+                       placeholder="Enter contact name"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail">Email Address</label>
+                <input type="email" id="contactEmail" name="contactEmail" 
+                       data-validate="required,email"
+                       placeholder="contact@example.com"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="contactMessage">Message</label>
+                <textarea id="contactMessage" name="contactMessage" 
+                          data-validate="required"
+                          placeholder="Your message here..."
+                          rows="5"
+                          style="width: 100%; padding: 12px; border: 1px solid #d7dde6; border-radius: 8px; font-family: Arial, sans-serif;"
+                          required></textarea>
+            </div>
+
+            <button type="submit" id="submitContactBtn">Send Message</button>
+            <button type="button" id="clearContactBtn" style="background: #6b7280; margin-left: 8px;">Clear</button>
+        </form>
+    </div>
+
+    <hr style="margin: 32px 0; border: none; border-top: 1px solid #d7dde6;">
+
+    <h2>Your Contacts</h2>
+    <div id="contactsList">
+        <div class="contact-item">
+            <div>
+                <strong>John Doe</strong><br>
+                <small>john@example.com</small>
+            </div>
+            <div class="contact-item-actions">
+                <button class="delete-btn" onclick="deleteContact(this, 'John Doe')">Delete</button>
+            </div>
+        </div>
+
+        <div class="contact-item">
+            <div>
+                <strong>Jane Smith</strong><br>
+                <small>jane@example.com</small>
+            </div>
+            <div class="contact-item-actions">
+                <button class="delete-btn" onclick="deleteContact(this, 'Jane Smith')">Delete</button>
+            </div>
+        </div>
+
+        <div class="contact-item">
+            <div>
+                <strong>Mike Johnson</strong><br>
+                <small>mike@example.com</small>
+            </div>
+            <div class="contact-item-actions">
+                <button class="delete-btn" onclick="deleteContact(this, 'Mike Johnson')">Delete</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Delete contact with confirmation
+    function deleteContact(button, contactName) {
+        showDeleteConfirmation(contactName, function() {
+            // Remove the contact item with animation
+            const contactItem = button.closest('.contact-item');
+            contactItem.style.opacity = '0';
+            contactItem.style.transform = 'translateX(100%)';
+            contactItem.style.transition = 'all 0.3s ease';
+            
+            setTimeout(() => {
+                contactItem.remove();
+                showAlert(`${contactName} has been deleted successfully.`, 'success');
+            }, 300);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup form validation for contact form
+        attachFormValidation('contactForm');
+        
+        // Setup character counter for textarea
+        const textarea = document.getElementById('contactMessage');
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            const counter = this.parentNode.querySelector('.char-counter') || 
+                          document.createElement('span');
+            counter.className = 'char-counter';
+            counter.textContent = `${length} characters`;
+            if (!this.parentNode.querySelector('.char-counter')) {
+                this.parentNode.appendChild(counter);
+            }
+        });
+        
+        // Setup form submission
+        setupFormSubmission('contactForm', function(form) {
+            const contactName = document.getElementById('contactName').value;
+            
+            // Add new contact to the list
+            const contactsList = document.getElementById('contactsList');
+            const newContact = document.createElement('div');
+            newContact.className = 'contact-item';
+            newContact.style.opacity = '0';
+            newContact.style.transform = 'translateX(-100%)';
+            newContact.style.transition = 'all 0.3s ease';
+            
+            newContact.innerHTML = `
+                <div>
+                    <strong>${contactName}</strong><br>
+                    <small>${document.getElementById('contactEmail').value}</small>
+                </div>
+                <div class="contact-item-actions">
+                    <button class="delete-btn" onclick="deleteContact(this, '${contactName}')">Delete</button>
+                </div>
+            `;
+            
+            contactsList.appendChild(newContact);
+            
+            // Trigger animation
+            setTimeout(() => {
+                newContact.style.opacity = '1';
+                newContact.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Show success message
+            showAlert(`${contactName} has been added to your contacts!`, 'success');
+            
+            // Clear form
+            form.reset();
+            clearFormErrors('contactForm');
+        });
+        
+        // Setup clear button
+        document.getElementById('clearContactBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to clear all fields?')) {
+                clearForm('contactForm');
+                clearFormErrors('contactForm');
+            }
+        });
+    });
+</script>
 {% endblock %}

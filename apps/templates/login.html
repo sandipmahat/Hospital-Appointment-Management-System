@@ -3,16 +3,74 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <h1>Login</h1>
-    <form method="post">
+    <h1>Login to Your Account</h1>
+    <p>Enter your credentials to access your dashboard.</p>
+    
+    <form id="loginForm" method="post">
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" 
+                   data-validate="required,email"
+                   placeholder="your.email@example.com"
+                   required>
         </div>
+
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <div style="display: flex; gap: 8px;">
+                <input type="password" id="password" name="password" 
+                       data-validate="required,password"
+                       placeholder="Enter your password"
+                       required
+                       style="flex: 1;">
+                <button type="button" id="togglePasswordBtn" class="toggle-password-btn">
+                    👁️ Show
+                </button>
+            </div>
         </div>
-        <button type="submit">Login</button>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                Remember me on this device
+            </label>
+        </div>
+
+        <button type="submit" id="submitBtn">Login</button>
+        <p style="text-align: center; margin-top: 16px;">
+            Don't have an account? <a href="/register" style="color: #4f46e5; text-decoration: none;">Register here</a>
+        </p>
     </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup form validation
+        attachFormValidation('loginForm');
+        
+        // Setup password visibility toggle
+        togglePasswordVisibility('password', 'togglePasswordBtn');
+        
+        // Setup form submission
+        setupFormSubmission('loginForm', function(form) {
+            const email = document.getElementById('email').value;
+            showAlert(`Welcome back, ${email}! Logging you in...`, 'success');
+            // The form will submit normally after validation
+            setTimeout(() => form.submit(), 500);
+        });
+        
+        // Add event listener to remember me checkbox
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        rememberMeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                showAlert('Your login details will be remembered.', 'info');
+            }
+        });
+        
+        // Add focus highlighting
+        addFocusHighlight('email');
+        addFocusHighlight('password');
+    });
+</script>
 {% endblock %}
