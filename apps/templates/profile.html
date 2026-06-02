@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <h1>Your Profile</h1>
+    <p>Update your account details and password below.</p>
+
+    <form id="profileForm" method="post" class="form-card">
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name"
+                   value="{{ user.name }}"
+                   data-validate="required,name"
+                   placeholder="Enter your full name"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email"
+                   value="{{ user.email }}"
+                   data-validate="required,email"
+                   placeholder="your.email@example.com"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword"
+                   placeholder="Enter current password">
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword"
+                   placeholder="Leave blank to keep current password">
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword"
+                   placeholder="Re-enter new password">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="button-primary">Save Changes</button>
+            <a href="/" class="button-ghost">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

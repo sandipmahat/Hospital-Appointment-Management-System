@@ -11,7 +11,7 @@
         <form id="contactForm" method="post">
             <div class="form-group">
                 <label for="contactName">Contact Name</label>
-                <input type="text" id="contactName" name="contactName" 
+                <input type="text" id="contactName" name="contactName"
                        data-validate="required,name"
                        placeholder="Enter contact name"
                        required>
@@ -19,24 +19,35 @@
 
             <div class="form-group">
                 <label for="contactEmail">Email Address</label>
-                <input type="email" id="contactEmail" name="contactEmail" 
+                <input type="email" id="contactEmail" name="contactEmail"
                        data-validate="required,email"
                        placeholder="contact@example.com"
                        required>
             </div>
 
+            <div class="form-group select-wrapper">
+                <label for="contactType">Contact Type</label>
+                <select id="contactType" name="contactType" data-validate="required" required>
+                    <option value="">Choose a type</option>
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="contactMessage">Message</label>
-                <textarea id="contactMessage" name="contactMessage" 
+                <textarea id="contactMessage" name="contactMessage"
                           data-validate="required"
                           placeholder="Your message here..."
                           rows="5"
-                          style="width: 100%; padding: 12px; border: 1px solid #d7dde6; border-radius: 8px; font-family: Arial, sans-serif;"
                           required></textarea>
             </div>
 
-            <button type="submit" id="submitContactBtn">Send Message</button>
-            <button type="button" id="clearContactBtn" style="background: #6b7280; margin-left: 8px;">Clear</button>
+            <div class="form-actions">
+                <button type="submit" id="submitContactBtn" class="button-primary">Send Message</button>
+                <button type="button" id="clearContactBtn" class="button-secondary">Clear</button>
+            </div>
         </form>
     </div>
 

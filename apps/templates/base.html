@@ -11,10 +11,17 @@
     <header>
         <nav>
             <a href="/">Home</a>
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
             <a href="/contact">Contact</a>
-            <a href="/dashboard">Dashboard</a>
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('auth.profile') }}">Profile</a>
+                {% if session.get('user_role') == 'admin' %}
+                    <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
         </nav>
     </header>
     <main>
