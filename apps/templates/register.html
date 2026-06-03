@@ -26,14 +26,13 @@
 
         <div class="form-group">
             <label for="password">Password</label>
-            <div style="display: flex; gap: 8px;">
+            <div class="password-input-group">
                 <input type="password" id="password" name="password" 
                        data-validate="required,password"
                        placeholder="At least 6 characters"
-                       required
-                       style="flex: 1;">
+                       required>
                 <button type="button" id="togglePasswordBtn" class="toggle-password-btn">
-                    👁️ Show
+                    Show
                 </button>
             </div>
             <div class="password-strength" id="passwordStrength"></div>
@@ -41,10 +40,15 @@
 
         <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" 
-                   data-validate="required"
-                   placeholder="Re-enter your password"
-                   required>
+            <div class="password-input-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" 
+                       data-validate="required"
+                       placeholder="Re-enter your password"
+                       required>
+                <button type="button" id="toggleConfirmPasswordBtn" class="toggle-password-btn">
+                    Show
+                </button>
+            </div>
         </div>
 
         <button type="submit" id="submitBtn">Register</button>
@@ -63,6 +67,7 @@
         
         // Setup password visibility toggle
         togglePasswordVisibility('password', 'togglePasswordBtn');
+        togglePasswordVisibility('confirmPassword', 'toggleConfirmPasswordBtn');
         
         // Setup password strength indicator
         updatePasswordStrength('password', 'passwordStrength');

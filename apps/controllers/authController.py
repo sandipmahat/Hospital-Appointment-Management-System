@@ -15,6 +15,11 @@ def contact():
 
 # ---------------- LOGIN FUNCTION ----------------
 def login():
+    if session.get("user_id"):
+        if session.get("user_role") == "admin":
+            return redirect(url_for("auth.dashboard"))
+        return redirect(url_for("auth.home"))
+
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
@@ -52,7 +57,9 @@ def login():
 # ---------------- REGISTER FUNCTION ----------------
 def register():
     if session.get("user_id"):
-        return redirect(url_for("auth.dashboard"))
+        if session.get("user_role") == "admin":
+            return redirect(url_for("auth.dashboard"))
+        return redirect(url_for("auth.home"))
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -92,15 +99,6 @@ def register():
         return redirect(url_for("auth.login"))
 
     return render_template("register.html")
-
-
-# ---------------- DASHBOARD ----------------
-def dashboard():
-    # check login
-    if not session.get("user_id"):
-        return redirect(url_for("auth.login"))
-
-    return render_template("dashboard.html")
 
 
 # ---------------- LOGOUT ----------------
