@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+    <section class="about-section">
+        <h1>About Us</h1>
+        <p>Learn more about our company and what makes us different.</p>
+        <ul>
+            {% for u in aboutcompany %}
+                {% if u.name == "softwarica" %}
+                    <li>{{ u.name }} - {{ u.address }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

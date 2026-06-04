@@ -5,7 +5,16 @@ from apps.database import get_connection
 
 # ---------------- HOME PAGE ----------------
 def home():
-    return render_template("index.html")
+    return render_template("home.html", name=session.get("user_name"))
+
+
+# ---------------- ABOUT PAGE ----------------
+def about():
+    aboutcompany = [
+        {"name": "softwarica", "address": "Lalitpur, Nepal"},
+        {"name": "another company", "address": "Kathmandu, Nepal"},
+    ]
+    return render_template("about.html", aboutcompany=aboutcompany)
 
 
 # ---------------- CONTACT PAGE ----------------

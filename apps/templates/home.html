@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <section class="home-hero">
+        <h1>Homepage welcome {{ name or "Guest" }}!</h1>
+        <p>Welcome to Sandycare.me. Use the navigation links to explore the site, log in, or register.</p>
+        {% if session.get('user_id') %}
+            <p>You are logged in as {{ session.get('user_name') }}.</p>
+            <a class="button" href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+            <a class="button" href="{{ url_for('auth.login') }}">Login</a>
+            <a class="button" href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
+    </section>
+{% endblock %}
