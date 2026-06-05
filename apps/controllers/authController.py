@@ -5,7 +5,7 @@ from apps.database import get_connection
 
 # ---------------- HOME PAGE ----------------
 def home():
-    return render_template("home.html", name=session.get("user_name"))
+    return render_template("medhub.html", name=session.get("user_name"))
 
 
 # ---------------- ABOUT PAGE ----------------

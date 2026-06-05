@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block title %}sandyHUb – Hospital Appointment Management System{% endblock %}
+
+{% block styles %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medhub.css') }}">
+{% endblock %}
+
+{% block header %}
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-left">
+      <span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        45 Medical Drive, Kathmandu 44600, Nepal
+      </span>
+      <span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>
+        appointments@medhub.com.np
+      </span>
+    </div>
+    <div class="topbar-right">
+      <span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.61 16.92z"/></svg>
+        +977 9749754230
+      </span>
+      <span>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Mon–Sat: 7AM – 8PM
+      </span>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402C1 4.022 3.022 2 5.191 2c1.312 0 2.677.651 3.809 1.86 1.132-1.209 2.497-1.86 3.809-1.86C15.978 2 18 4.022 18 7.191c0 4.105-5.37 8.863-11 14.402z"/></svg>
+      </div>
+      sandyHUb
+    </div>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#departments">Departments</a></li>
+      <li><a href="#doctors">Doctors</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#appointment" class="btn-primary">Book Appointment</a>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-label">Nepal's #1 Hospital Management Platform · Since 2010</div>
+    <h1>Book, Manage & Track Your Hospital Appointments — All in One Place</h1>
+    <p>Skip the queues. Schedule consultations, manage prescriptions, and access your health records digitally — anytime, from anywhere.</p>
+    <div class="hero-btns">
+      <a href="#appointment" class="btn-accent">Book Appointment</a>
+      <a href="#services" class="btn-outline">Explore Services</a>
+    </div>
+    <div class="hero-pills">
+      <div class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        Real-Time Scheduling
+      </div>
+      <div class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        Digital Health Records
+      </div>
+      <div class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/><path d="M1 1l22 22"/></svg>
+        SMS & Email Reminders
+      </div>
+      <div class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Telemedicine Ready
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="container">
+    <div class="stat-item">
+      <div class="num">50,000+</div>
+      <div class="lbl">Patients Served</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">120</div>
+      <div class="lbl">Specialist Doctors</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">98%</div>
+      <div class="lbl">On-Time Rate</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">24 / 7</div>
+      <div class="lbl">Emergency Support</div>
+    </div>
+  </div>
+</div>
+
+<section class="how-it-works section-padding">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag">Simple Process</span>
+      <h2 class="section-title">How It Works</h2>
+      <div class="title-bar center"></div>
+      <p class="section-desc">Get from registration to consultation in four easy steps — no paperwork, no long queues.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Register Online</h3>
+        <p>Create your patient profile in under 2 minutes from any device — phone, tablet, or desktop.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Choose Doctor</h3>
+        <p>Browse specialists by department, view live availability, and pick a time that fits your schedule.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Get Confirmation</h3>
+        <p>Receive instant SMS and email confirmation with your appointment details and doctor's location.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h3>Visit & Follow Up</h3>
+        <p>Walk in at your time slot, receive digital prescriptions, and track follow-ups from your dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about section-padding" id="about">
+  <div class="container">
+    <div class="about-visual">
+      <div class="about-img-box">
+        <svg class="big" viewBox="0 0 120 140" fill="none">
+          <ellipse cx="60" cy="52" rx="34" ry="38" fill="#185FA5" opacity=".25"/>
+          <circle cx="60" cy="38" r="22" fill="#185FA5" opacity=".4"/>
+          <rect x="30" y="78" width="60" height="56" rx="10" fill="#185FA5" opacity=".2"/>
+          <rect x="52" y="30" width="4" height="16" rx="2" fill="#fff" opacity=".7"/>
+          <rect x="44" y="38" width="20" height="4" rx="2" fill="#fff" opacity=".7"/>
+        </svg>
+      </div>
+      <div class="about-card-float top">
+        <div class="dot"></div>
+        <span>247 Appointments Today</span>
+      </div>
+      <div class="about-card-float mid">
+        <div class="dot"></div>
+        <span>Avg. Wait: 4 min</span>
+      </div>
+      <div class="about-badge">
+        <span class="big">15+</span>
+        Years of<br>Excellence
+      </div>
+    </div>
+    <div>
+      <span class="section-tag">Who We Are</span>
+      <h2 class="section-title">Nepal's Most Trusted Hospital Appointment Platform</h2>
+      <div class="title-bar"></div>
+      <p>sandyHUb connects patients to the right doctor at the right time. Our digital system eliminates waiting, reduces paperwork, and keeps your entire health history organised and accessible — securely, from one place.</p>
+      <div class="about-features">
+        <div class="feat-row">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+          </div>
+          <div class="feat-text">
+            <h4>Real-Time Appointment Scheduling</h4>
+            <p>Live slot availability across all departments — book instantly, available 24/7 from any device.</p>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <div class="feat-text">
+            <h4>Digital Health Records (EHR)</h4>
+            <p>Prescriptions, lab results, and visit history stored securely and shareable with any doctor instantly.</p>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="feat-text">
+            <h4>Smart Reminders & Notifications</h4>
+            <p>Automated SMS and email reminders so patients never miss a follow-up or medication schedule.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services section-padding" id="services">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag">What We Offer</span>
+      <h2 class="section-title">Hospital Services</h2>
+      <div class="title-bar center"></div>
+      <p class="section-desc">From OPD bookings to emergency triage, our platform covers every patient touchpoint across all departments.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+        </div>
+        <h3>OPD Appointments</h3>
+        <p>Book outpatient consultations with any specialist in real-time — no phone calls, no queues.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Inpatient Management</h3>
+        <p>Track ward admissions, bed availability, and discharge plans from a unified dashboard.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+        </div>
+        <h3>Lab & Diagnostics</h3>
+        <p>Schedule tests, receive digital lab reports, and share results directly with your consulting doctor.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3>Emergency Triage</h3>
+        <p>Priority queue management for emergency walk-ins with real-time patient status tracking.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 1 5 5v3H7V7a5 5 0 0 1 5-5z"/><path d="M3 10h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z"/><path d="M12 14v4M10 16h4"/></svg>
+        </div>
+        <h3>Pharmacy & Prescriptions</h3>
+        <p>Digital prescriptions sent to the in-hospital pharmacy — collect without waiting in line.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h3>Telemedicine</h3>
+        <p>HD video consultations with your assigned doctor — from home, office, or anywhere in Nepal.</p>
+        <a href="#" class="svc-link">Learn More →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="departments section-padding" id="departments">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag">Our Specialties</span>
+      <h2 class="section-title">Browse by Department</h2>
+      <div class="title-bar center"></div>
+      <p class="section-desc">Covering all major medical departments with specialist doctors available for booking.</p>
+    </div>
+    <div class="dept-grid">
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h4>Cardiology</h4>
+        <span>14 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <h4>Neurology</h4>
+        <span>9 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        </div>
+        <h4>Pediatrics</h4>
+        <span>11 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8"/></svg>
+        </div>
+        <h4>Orthopedics</h4>
+        <span>8 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <h4>Ophthalmology</h4>
+        <span>6 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18"/><path d="M3 13h6m4 0h8"/></svg>
+        </div>
+        <h4>General Surgery</h4>
+        <span>12 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h4>Oncology</h4>
+        <span>7 Specialists</span>
+      </div>
+      <div class="dept-card">
+        <div class="dept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h4>General OPD</h4>
+        <span>18 Doctors</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="team section-padding" id="doctors">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag">Our Specialists</span>
+      <h2 class="section-title">Meet Our Expert Doctors</h2>
+      <div class="title-bar center"></div>
+      <p class="section-desc">Board-certified specialists with decades of combined experience, available for in-person and telemedicine consultations.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">
+          <div class="team-avatar-bg"></div>
+          <svg viewBox="0 0 80 100" fill="none"><ellipse cx="40" cy="35" rx="22" ry="24" fill="#185FA5" opacity=".4"/><ellipse cx="40" cy="82" rx="30" ry="22" fill="#185FA5" opacity=".25"/></svg>
+        </div>
+        <div class="team-info">
+          <h4>Dr. Sita Sharma</h4>
+          <span class="specialty">Cardiologist</span>
+          <div class="avail"><div class="avail-dot"></div> Available Today</div>
+          <a href="#appointment" class="team-btn">Book Appointment</a>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">
+          <div class="team-avatar-bg"></div>
+          <svg viewBox="0 0 80 100" fill="none"><ellipse cx="40" cy="35" rx="22" ry="24" fill="#0C447C" opacity=".4"/><ellipse cx="40" cy="82" rx="30" ry="22" fill="#0C447C" opacity=".25"/></svg>
+        </div>
+        <div class="team-info">
+          <h4>Dr. Ram Adhikari</h4>
+          <span class="specialty">Neurologist</span>
+          <div class="avail"><div class="avail-dot"></div> Available Today</div>
+          <a href="#appointment" class="team-btn">Book Appointment</a>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">
+          <div class="team-avatar-bg"></div>
+          <svg viewBox="0 0 80 100" fill="none"><ellipse cx="40" cy="35" rx="22" ry="24" fill="#185FA5" opacity=".4"/><ellipse cx="40" cy="82" rx="30" ry="22" fill="#185FA5" opacity=".25"/></svg>
+        </div>
+        <div class="team-info">
+          <h4>Dr. Priya Thapa</h4>
+          <span class="specialty">Pediatrician</span>
+          <div class="avail"><div class="avail-dot"></div> Available Tomorrow</div>
+          <a href="#appointment" class="team-btn">Book Appointment</a>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">
+          <div class="team-avatar-bg"></div>
+          <svg viewBox="0 0 80 100" fill="none"><ellipse cx="40" cy="35" rx="22" ry="24" fill="#0C447C" opacity=".4"/><ellipse cx="40" cy="82" rx="30" ry="22" fill="#0C447C" opacity=".25"/></svg>
+        </div>
+        <div class="team-info">
+          <h4>Dr. Bikash Rai</h4>
+          <span class="specialty">Orthopedic Surgeon</span>
+          <div class="avail"><div class="avail-dot"></div> Available Today</div>
+          <a href="#appointment" class="team-btn">Book Appointment</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials section-padding">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag">Patient Stories</span>
+      <h2 class="section-title">What Our Patients Say</h2>
+      <div class="title-bar center"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★★</div>
+        <p>Booked a cardiology slot in under 2 minutes. Got a reminder, zero waiting at the hospital. Unbelievable compared to before.</p>
+        <div class="testi-author">
+          <div class="testi-av">AM</div>
+          <div>
+            <div class="testi-name">Anita Maharjan</div>
+            <div class="testi-role">Patient since 2022</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★★</div>
+        <p>The telemedicine feature saved me a 3-hour trip from Pokhara. Dr. Adhikari reviewed my MRI and adjusted my prescription online.</p>
+        <div class="testi-author">
+          <div class="testi-av">SK</div>
+          <div>
+            <div class="testi-name">Suresh KC</div>
+            <div class="testi-role">Patient since 2023</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="quote-mark">"</div>
+        <div class="stars">★★★★★</div>
+        <p>Our hospital switched to sandyHUb and OPD wait times dropped by 60%. Staff love it, patients love it. Best decision we've made.</p>
+        <div class="testi-author">
+          <div class="testi-av">DP</div>
+          <div>
+            <div class="testi-name">Dr. Deepak Pandey</div>
+            <div class="testi-role">Hospital Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="appointment-cta" id="appointment">
+  <div class="container">
+    <h2>Book Your Appointment Today</h2>
+    <p>Available across all departments. Instant confirmation via SMS and email — no waiting, no paperwork.</p>
+    <div class="appt-form">
+      <input type="text" placeholder="Full Name" />
+      <input type="tel" placeholder="Phone Number" />
+      <select>
+        <option value="">Select Department</option>
+        <option>Cardiology</option>
+        <option>Neurology</option>
+        <option>Pediatrics</option>
+        <option>Orthopedics</option>
+        <option>Ophthalmology</option>
+        <option>General Surgery</option>
+        <option>Oncology</option>
+        <option>General OPD</option>
+      </select>
+      <input type="date" />
+      <button class="btn-book-now">Book Now</button>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402C1 4.022 3.022 2 5.191 2c1.312 0 2.677.651 3.809 1.86 1.132-1.209 2.497-1.86 3.809-1.86C15.978 2 18 4.022 18 7.191c0 4.105-5.37 8.863-11 14.402z"/></svg>
+          </div>
+          sandyHUb
+        </div>
+        <p>Nepal's leading hospital appointment management platform — connecting patients to quality care, faster and smarter.</p>
+        <div class="footer-badges">
+          <span class="f-badge">ISO Certified</span>
+          <span class="f-badge">HIPAA Compliant</span>
+          <span class="f-badge">MoHP Registered</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#departments">Departments</a></li>
+          <li><a href="#doctors">Find a Doctor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">OPD Booking</a></li>
+          <li><a href="#">Inpatient Care</a></li>
+          <li><a href="#">Lab & Diagnostics</a></li>
+          <li><a href="#">Telemedicine</a></li>
+          <li><a href="#">Emergency Triage</a></li>
+          <li><a href="#">Pharmacy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="f-contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span>45 Medical Drive, Kathmandu 44600, Nepal</span>
+        </div>
+        <div class="f-contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.61 16.92z"/></svg>
+          <span>+977 9749754230</span>
+        </div>
+        <div class="f-contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>
+          <span>appointments@medhub.com.np</span>
+        </div>
+        <div class="f-contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Mon – Sat: 7:00 AM – 8:00 PM</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 sandyHUb Hospital Management System. All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a> · <a href="#">Support</a></span>
+    </div>
+  </div>
+</footer>
+{% endblock %}

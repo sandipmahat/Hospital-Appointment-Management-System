@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Flask App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block styles %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-9Pw2f0zAKg6xClEMw9NMDe5b2mvtW4XS/1YUB8jCwxQ00R15PbRh5D3PZ7BRzQeq94CtW1XKnj4RjW2patNf/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+    {% block header %}
     <header>
         <nav>
             <a href="/">Home</a>
@@ -25,6 +27,7 @@
             {% endif %}
         </nav>
     </header>
+    {% endblock %}
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -35,6 +38,7 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+    {% block footer %}{% endblock %}
     
     <!-- JavaScript Modules -->
     <script src="{{ url_for('static', filename='js/events-alerts.js') }}"></script>
