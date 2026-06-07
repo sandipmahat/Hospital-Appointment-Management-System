@@ -1,80 +1,853 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Login{% endblock %}
 
+{% block header %}{% endblock %}
+
+{% block styles %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy-deepest: #021d38;
+    --navy-deep: #042C53;
+    --navy-mid: #0C447C;
+    --blue-strong: #185FA5;
+    --blue-accent: #378ADD;
+    --blue-light: #85B7EB;
+    --blue-pale: #E6F1FB;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --green-border: #97C459;
+    --red-bg: #FCEBEB;
+    --red-text: #A32D2D;
+    --red-border: #F09595;
+    --text-primary: #1a1a1a;
+    --text-secondary: #5f5f5f;
+    --text-muted: #9a9a9a;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f6f8;
+    --border-light: rgba(0,0,0,0.1);
+    --border-mid: rgba(0,0,0,0.18);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-card: 0 8px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+
+  .card {
+    display: flex;
+    width: 100%;
+    max-width: 860px;
+    min-height: 560px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-panel {
+    flex: 0 0 380px;
+    background: var(--bg-primary);
+    padding: 2.5rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 2rem;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--navy-mid);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-icon i {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  .brand-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .brand-text p {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .form-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+  }
+
+  .form-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1.6rem;
+    line-height: 1.5;
+  }
+
+  .error-box {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--red-bg);
+    color: var(--red-text);
+    border: 0.5px solid var(--red-border);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    padding: 8px 12px;
+    margin-bottom: 1rem;
+  }
+
+  .error-box.visible { display: flex; }
+  .error-box i { font-size: 15px; flex-shrink: 0; }
+
+  .role-section { margin-bottom: 1.2rem; }
+
+  .field-label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .role-btn {
+    padding: 8px 4px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .role-btn i { font-size: 20px; }
+
+  .role-btn:hover {
+    border-color: var(--blue-accent);
+    color: var(--blue-accent);
+  }
+
+  .role-btn.active {
+    border: 1.5px solid var(--blue-accent);
+    background: var(--blue-pale);
+    color: var(--blue-strong);
+  }
+
+  .field { margin-bottom: 1rem; }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap .icon-left {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    height: 40px;
+    padding: 0 38px 0 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+
+  .input-wrap input::placeholder { color: var(--text-muted); }
+
+  .input-wrap input:focus {
+    border-color: var(--blue-accent);
+    box-shadow: 0 0 0 3px rgba(55,138,221,0.14);
+    background: var(--bg-primary);
+  }
+
+  .eye-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 15px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+
+  .eye-toggle:hover { color: var(--text-secondary); }
+
+  .forgot-row {
+    text-align: right;
+    margin-top: 5px;
+  }
+
+  .forgot-link {
+    font-size: 12px;
+    color: var(--blue-accent);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .forgot-link:hover { text-decoration: underline; }
+
+  .submit-btn {
+    width: 100%;
+    height: 42px;
+    background: var(--navy-mid);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1.35rem;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .submit-btn:hover { background: var(--blue-strong); }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+  .submit-btn .spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .form-footer {
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .form-footer a {
+    color: var(--blue-accent);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .form-footer a:hover { text-decoration: underline; }
+
+  .visual-panel {
+    flex: 1;
+    background: var(--navy-deep);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    overflow: hidden;
+  }
+
+  .visual-bg { position: absolute; inset: 0; z-index: 0; }
+
+  .circle-dec {
+    position: absolute;
+    border-radius: 50%;
+    border: 0.5px solid rgba(255,255,255,0.07);
+  }
+
+  .circle-dec.c1 { width: 260px; height: 260px; top: -80px; right: -80px; }
+  .circle-dec.c2 { width: 180px; height: 180px; bottom: -50px; left: -50px; }
+  .circle-dec.c3 { width: 100px; height: 100px; top: 50%; left: 15%; opacity: 0.5; }
+
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .visual-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .visual-icon-ring {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgba(55,138,221,0.15);
+    border: 1px solid rgba(133,183,235,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .visual-icon-ring i {
+    font-size: 34px;
+    color: var(--blue-light);
+  }
+
+  .visual-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+
+  .visual-heading em {
+    font-style: italic;
+    color: var(--blue-light);
+  }
+
+  .visual-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.65;
+    max-width: 230px;
+    margin: 0 auto 2rem;
+  }
+
+  .stats {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .stat { text-align: center; }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  .stat-div {
+    width: 0.5px;
+    height: 36px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .feature-pills {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 240px;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .pill i { font-size: 15px; color: var(--blue-light); }
+
+  .success-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .success-overlay.visible { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .check-ring {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--green-bg);
+    border: 1px solid var(--green-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .check-ring i { font-size: 30px; color: var(--green-text); }
+
+  .success-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 7px;
+  }
+
+  .success-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-track {
+    width: 140px;
+    height: 3px;
+    background: var(--bg-secondary);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--blue-accent);
+    border-radius: 2px;
+    transition: width 1.6s linear;
+  }
+
+  @media (max-width: 680px) {
+    body { padding: 0; align-items: stretch; }
+
+    .card {
+      flex-direction: column;
+      border-radius: 0;
+      min-height: 100vh;
+      box-shadow: none;
+    }
+
+    .form-panel {
+      flex: none;
+      width: 100%;
+      padding: 2rem 1.5rem;
+      order: 2;
+    }
+
+    .visual-panel {
+      flex: none;
+      min-height: 200px;
+      order: 1;
+      padding: 2rem 1.5rem;
+    }
+
+    .feature-pills { display: none; }
+
+    .visual-desc { display: none; }
+
+    .stats { gap: 1rem; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-    <h1>Login to Your Account</h1>
-    <p>Enter your credentials to access your dashboard.</p>
-    
-    <form id="loginForm" method="post" class="form-card">
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email"
-                   data-validate="required,email"
-                   placeholder="your.email@example.com"
-                   required>
-            <span class="field-status">Enter the email associated with your account.</span>
-        </div>
+<div class="card" role="main">
+  <div class="form-panel">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <i class="ti ti-plus"></i>
+      </div>
+      <div class="brand-text">
+        <h1>MediCare Portal</h1>
+        <p>Appointment Management</p>
+      </div>
+    </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <div class="password-input-group">
-                <input type="password" id="password" name="password"
-                       data-validate="required,password"
-                       placeholder="Enter your password"
-                       required>
-                <button type="button" id="togglePasswordBtn" class="toggle-password-btn button-secondary">
-                    Show
-                </button>
-            </div>
-        </div>
+    <h2 class="form-heading">Welcome back</h2>
+    <p class="form-sub">Sign in to access your hospital dashboard and appointments.</p>
 
-        <div class="form-group">
-            <label class="form-checkbox">
-                <input type="checkbox" id="rememberMe" name="rememberMe">
-                Remember me on this device
-            </label>
-        </div>
+    <form id="loginForm" method="post" action="{{ url_for('auth.login') }}">
+      <input type="hidden" id="roleInput" name="role" value="Patient">
 
-        <div class="form-actions">
-            <button type="submit" id="submitBtn" class="button-primary">Login</button>
-            <button type="button" class="button-ghost" onclick="alert('Password reset flow coming soon')">Forgot password?</button>
-        </div>
+      <div class="error-box" id="errorBox" role="alert" aria-live="polite">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <span id="errorText">Invalid credentials. Please try again.</span>
+      </div>
 
-        <p class="field-status" style="margin-top: 20px; text-align: center;">
-            Don&rsquo;t have an account? <a href="/register" class="inline-link">Register here</a>
-        </p>
+      <div class="role-section">
+        <label class="field-label">Sign in as</label>
+        <div class="role-grid" role="group" aria-label="Select your role">
+          <button class="role-btn active" type="button" onclick="selectRole(this, 'Patient')" aria-pressed="true">
+            <i class="ti ti-user" aria-hidden="true"></i>
+            Patient
+          </button>
+          <button class="role-btn" type="button" onclick="selectRole(this, 'Doctor')" aria-pressed="false">
+            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+            Doctor
+          </button>
+          <button class="role-btn" type="button" onclick="selectRole(this, 'Admin')" aria-pressed="false">
+            <i class="ti ti-shield-check" aria-hidden="true"></i>
+            Admin
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="emailInput">Email address</label>
+        <div class="input-wrap">
+          <i class="ti ti-mail icon-left" aria-hidden="true"></i>
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="name@hospital.org"
+            autocomplete="email"
+            spellcheck="false"
+            data-validate="required,email"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="passInput">Password</label>
+        <div class="input-wrap">
+          <i class="ti ti-lock icon-left" aria-hidden="true"></i>
+          <input
+            type="password"
+            id="passInput"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            data-validate="required,password"
+          />
+          <button class="eye-toggle" type="button" id="togglePasswordBtn" aria-label="Show password">
+            <i class="ti ti-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+        <div class="forgot-row">
+          <a class="forgot-link" href="#" onclick="handleForgot(event)">Forgot password?</a>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" id="rememberMe" name="rememberMe">
+          Remember me on this device
+        </label>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" type="submit">
+        <div class="spinner" id="spinner"></div>
+        <i class="ti ti-login" id="submitIcon" aria-hidden="true"></i>
+        <span id="submitLabel">Sign in securely</span>
+      </button>
+
+      <p class="form-footer">
+        New patient? <a href="{{ url_for('auth.register') }}">Request access &rarr;</a>
+      </p>
     </form>
+  </div>
+
+  <div class="visual-panel" aria-hidden="true">
+    <div class="visual-bg">
+      <div class="grid-overlay"></div>
+      <div class="circle-dec c1"></div>
+      <div class="circle-dec c2"></div>
+      <div class="circle-dec c3"></div>
+    </div>
+
+    <div class="visual-content">
+      <div class="visual-icon-ring">
+        <i class="ti ti-calendar-heart"></i>
+      </div>
+
+      <p class="visual-heading">
+        Your health,<br><em>managed simply</em>
+      </p>
+
+      <p class="visual-desc">
+        Book, track, and manage all your hospital appointments in one secure, unified place.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">24/7</div>
+          <div class="stat-lbl">Availability</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-num">500+</div>
+          <div class="stat-lbl">Doctors</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-lbl">Secure</div>
+        </div>
+      </div>
+
+      <div class="feature-pills">
+        <div class="pill">
+          <i class="ti ti-calendar-check" aria-hidden="true"></i>
+          Easy appointment booking
+        </div>
+        <div class="pill">
+          <i class="ti ti-bell" aria-hidden="true"></i>
+          Automated reminders
+        </div>
+        <div class="pill">
+          <i class="ti ti-file-medical" aria-hidden="true"></i>
+          Digital health records
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-overlay" id="successOverlay" role="status" aria-live="polite">
+    <div class="check-ring">
+      <i class="ti ti-check"></i>
+    </div>
+    <h2 class="success-title">Login successful</h2>
+    <p class="success-sub">Redirecting to your <strong id="roleLabel">Patient</strong> dashboard&hellip;</p>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Setup form validation
-        attachFormValidation('loginForm');
-        
-        // Setup password visibility toggle
-        togglePasswordVisibility('password', 'togglePasswordBtn');
-        
-        // Setup form submission
-        setupFormSubmission('loginForm', function(form) {
-            const email = document.getElementById('email').value;
-            showAlert(`Welcome back, ${email}! Logging you in...`, 'success');
-            // The form will submit normally after validation
-            setTimeout(() => form.submit(), 500);
-        });
-        
-        // Add event listener to remember me checkbox
-        const rememberMeCheckbox = document.getElementById('rememberMe');
-        rememberMeCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                showAlert('Your login details will be remembered.', 'info');
-            }
-        });
-        
-        // Add focus highlighting
-        addFocusHighlight('email');
-        addFocusHighlight('password');
+  document.addEventListener('DOMContentLoaded', function() {
+    attachFormValidation('loginForm');
+
+    setupFormSubmission('loginForm', function(form) {
+      const email = document.getElementById('emailInput').value;
+      showAlert(`Welcome back, ${email}! Logging you in...`, 'success');
+      setTimeout(function() {
+        form.submit();
+      }, 500);
     });
+
+    const rememberMeCheckbox = document.getElementById('rememberMe');
+    if (rememberMeCheckbox) {
+      rememberMeCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          showAlert('Your login details will be remembered.', 'info');
+        }
+      });
+    }
+
+    addFocusHighlight('emailInput');
+    addFocusHighlight('passInput');
+  });
+
+  let selectedRole = 'Patient';
+
+  function selectRole(btn, role) {
+    document.querySelectorAll('.role-btn').forEach(function(b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    selectedRole = role;
+    const roleField = document.getElementById('roleInput');
+    if (roleField) {
+      roleField.value = role;
+    }
+    hideError();
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    const text = document.getElementById('errorText');
+    if (box && text) {
+      text.textContent = msg;
+      box.classList.add('visible');
+    }
+  }
+
+  function hideError() {
+    const box = document.getElementById('errorBox');
+    if (box) {
+      box.classList.remove('visible');
+    }
+  }
+
+  function togglePass() {
+    const passInput = document.getElementById('passInput');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const toggleButton = document.getElementById('togglePasswordBtn');
+    if (!passInput || !eyeIcon || !toggleButton) {
+      return;
+    }
+
+    if (passInput.type === 'password') {
+      passInput.type = 'text';
+      eyeIcon.className = 'ti ti-eye-off';
+      toggleButton.setAttribute('aria-label', 'Hide password');
+    } else {
+      passInput.type = 'password';
+      eyeIcon.className = 'ti ti-eye';
+      toggleButton.setAttribute('aria-label', 'Show password');
+    }
+  }
+
+  function handleForgot(e) {
+    e.preventDefault();
+    alert('Password reset: please contact your hospital administrator or visit the help desk.');
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    window.location.href = "{{ url_for('auth.register') }}";
+  }
+
+  function setLoading(loading) {
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const icon = document.getElementById('submitIcon');
+    const label = document.getElementById('submitLabel');
+
+    if (btn && spinner && icon && label) {
+      if (loading) {
+        spinner.style.display = 'block';
+        icon.style.display = 'none';
+        label.textContent = 'Signing in…';
+        btn.disabled = true;
+      } else {
+        spinner.style.display = 'none';
+        icon.style.display = '';
+        label.textContent = 'Sign in securely';
+        btn.disabled = false;
+      }
+    }
+  }
+
+  function showSuccess() {
+    const overlay = document.getElementById('successOverlay');
+    const roleLabel = document.getElementById('roleLabel');
+    const progress = document.getElementById('progressFill');
+    if (roleLabel) roleLabel.textContent = selectedRole;
+    if (overlay) overlay.classList.add('visible');
+    if (progress) {
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          progress.style.width = '100%';
+        });
+      });
+    }
+  }
+
+  document.getElementById('emailInput')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('passInput')?.focus();
+    }
+  });
+
+  document.getElementById('passInput')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('loginForm')?.requestSubmit();
+    }
+  });
+
+  ['emailInput', 'passInput'].forEach(function(id) {
+    const field = document.getElementById(id);
+    if (field) {
+      field.addEventListener('input', hideError);
+    }
+  });
 </script>
 {% endblock %}
