@@ -17,8 +17,11 @@
             <a href="{{ url_for('auth.about') }}">About</a>
             {% if session.get('user_id') %}
                 <a href="{{ url_for('auth.profile') }}">Profile</a>
+                <a href="{{ url_for('auth.book_appointment') }}">Book Appointment</a>
+                <a href="{{ url_for('auth.my_appointments') }}">My Appointments</a>
                 {% if session.get('user_role') == 'admin' %}
                     <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('auth.admin_appointments') }}">Manage Appointments</a>
                 {% endif %}
                 <a href="{{ url_for('auth.logout') }}">Logout</a>
             {% else %}

@@ -34,6 +34,54 @@
                 </table>
             </div>
         </section>
+
+        <section class="dashboard-table">
+            <h2>All Appointments</h2>
+            {% if appointments %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Email</th>
+                                <th>Doctor</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.id }}</td>
+                                    <td>{{ appt.patient_name }}</td>
+                                    <td>{{ appt.patient_email }}</td>
+                                    <td>{{ appt.doctor_name }}</td>
+                                    <td>{{ appt.department }}</td>
+                                    <td>{{ appt.appointment_date }}</td>
+                                    <td>{{ appt.appointment_time }}</td>
+                                    <td>{{ appt.status }}</td>
+                                    <td>{{ appt.created_at }}</td>
+                                    <td>
+                                        <form action="{{ url_for('auth.admin_appointments') }}" method="post" style="display:inline-flex; gap:0.25rem;">
+                                            <input type="hidden" name="appointment_id" value="{{ appt.id }}">
+                                            <button type="submit" name="action" value="approve">Approve</button>
+                                            <button type="submit" name="action" value="cancel">Cancel</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No appointments have been booked yet.</p>
+            {% endif %}
+        </section>
     {% else %}
         <p>No users found.</p>
     {% endif %}

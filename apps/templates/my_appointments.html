@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+    <section class="section-padding">
+        <div class="container">
+            <h1>My Appointments</h1>
+            <p>Review the status of your upcoming bookings.</p>
+            {% if appointments %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Doctor</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Booked On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.id }}</td>
+                                    <td>{{ appt.doctor_name }}</td>
+                                    <td>{{ appt.department }}</td>
+                                    <td>{{ appt.appointment_date }}</td>
+                                    <td>{{ appt.appointment_time }}</td>
+                                    <td>{{ appt.status }}</td>
+                                    <td>{{ appt.created_at }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>You have no appointments booked yet.</p>
+                <a href="{{ url_for('auth.book_appointment') }}" class="btn-primary">Book Your First Appointment</a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

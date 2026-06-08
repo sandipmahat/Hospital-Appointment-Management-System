@@ -134,10 +134,119 @@ def dashboard():
     )
     users = cursor.fetchall()
 
+    cursor.execute(
+        "SELECT a.id, a.user_id, u.name AS patient_name, u.email AS patient_email, a.doctor_name, a.department, a.appointment_date, a.appointment_time, a.status, a.created_at "
+        "FROM appointments a "
+        "LEFT JOIN users u ON u.id = a.user_id "
+        "ORDER BY a.appointment_date ASC, a.appointment_time ASC"
+    )
+    appointments = cursor.fetchall()
+
     cursor.close()
     conn.close()
 
-    return render_template("dashboard.html", users=users)
+    return render_template("dashboard.html", users=users, appointments=appointments)
+
+
+# ---------------- ADMIN APPOINTMENTS ----------------
+def admin_appointments():
+    if request.method == "POST":
+        appointment_id = request.form.get("appointment_id")
+        action = request.form.get("action")
+        if appointment_id and action in {"approve", "cancel"}:
+            status = "approved" if action == "approve" else "cancelled"
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE appointments SET status = %s WHERE id = %s",
+                (status, appointment_id),
+            )
+            affected = cursor.rowcount
+            conn.commit()
+            cursor.close()
+            conn.close()
+            if affected:
+                flash(f"Appointment {status}.", "success")
+            else:
+                flash("Unable to update appointment status.", "error")
+        else:
+            flash("Invalid appointment action.", "error")
+
+    return dashboard()
+
+
+# ---------------- BOOK APPOINTMENT ----------------
+def book_appointment():
+    departments = [
+        "Cardiology",
+        "Neurology",
+        "Pediatrics",
+        "Orthopedics",
+        "Dermatology",
+        "General Medicine",
+    ]
+    doctors = [
+        "Dr. Sharma",
+        "Dr. Koirala",
+        "Dr. Singh",
+        "Dr. Thapa",
+        "Dr. Kumar",
+        "Dr. Joshi",
+    ]
+
+    if request.method == "POST":
+        department = request.form.get("department", "").strip()
+        doctor_name = request.form.get("doctor_name", "").strip()
+        appointment_date = request.form.get("appointment_date", "").strip()
+        appointment_time = request.form.get("appointment_time", "").strip()
+
+        if not department or not doctor_name or not appointment_date or not appointment_time:
+            flash("All appointment fields are required.", "error")
+            return render_template(
+                "book_appointment.html",
+                departments=departments,
+                doctors=doctors,
+            )
+
+        user_id = session["user_id"]
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO appointments (user_id, doctor_name, department, appointment_date, appointment_time) "
+            "VALUES (%s, %s, %s, %s, %s)",
+            (user_id, doctor_name, department, appointment_date, appointment_time),
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash("Appointment booked successfully. Your request is pending approval.", "success")
+        return redirect(url_for("auth.my_appointments"))
+
+    return render_template(
+        "book_appointment.html",
+        departments=departments,
+        doctors=doctors,
+    )
+
+
+# ---------------- MY APPOINTMENTS ----------------
+def my_appointments():
+    user_id = session.get("user_id")
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, doctor_name, department, appointment_date, appointment_time, status, created_at "
+        "FROM appointments "
+        "WHERE user_id = %s "
+        "ORDER BY appointment_date ASC, appointment_time ASC",
+        (user_id,),
+    )
+    appointments = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template("my_appointments.html", appointments=appointments)
 
 
 # ---------------- PROFILE ----------------

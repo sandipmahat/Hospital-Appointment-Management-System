@@ -2,9 +2,20 @@ from flask import Flask, render_template
 from apps.routes import authRoutes
 import config
 
+from apps.database import create_tables
+
 def create_apps():
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.secret_key = config.SECRET_KEY
+
+    # Ensure database and tables exist before registering routes
+    try:
+        create_tables()
+    except Exception as e:
+        # Print useful message and re-raise so startup fails loudly during development
+        print("Failed to prepare database:", e)
+        raise
+
     app.register_blueprint(authRoutes.register())
 
     # Custom error pages

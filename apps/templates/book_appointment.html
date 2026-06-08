@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+    <section class="section-padding">
+        <div class="container">
+            <h1>Book Appointment</h1>
+            <p>Choose your preferred department, doctor, date, and time.</p>
+            <form method="post" class="form-card">
+                <div class="form-row">
+                    <label for="department">Department</label>
+                    <select id="department" name="department" required>
+                        <option value="">Select department</option>
+                        {% for department in departments %}
+                            <option value="{{ department }}">{{ department }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="doctor_name">Doctor</label>
+                    <select id="doctor_name" name="doctor_name" required>
+                        <option value="">Select doctor</option>
+                        {% for doctor in doctors %}
+                            <option value="{{ doctor }}">{{ doctor }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="appointment_date">Appointment Date</label>
+                    <input type="date" id="appointment_date" name="appointment_date" required>
+                </div>
+                <div class="form-row">
+                    <label for="appointment_time">Appointment Time</label>
+                    <input type="time" id="appointment_time" name="appointment_time" required>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn-primary">Book Appointment</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
