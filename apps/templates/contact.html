@@ -7,6 +7,12 @@
     <p>Manage your contacts and send messages.</p>
     
     <div class="contact-form-container">
+        <div class="form-actions" style="margin-bottom: 16px;">
+            <button type="button" id="toggleHelpBtn" class="button-secondary">Show help</button>
+        </div>
+        <div id="helpPanel" style="display: none; margin-bottom: 16px; padding: 12px 14px; border: 1px solid #d7dde6; border-radius: 12px; background: #f8fbff;">
+            <strong>Tip:</strong> Use the form to add a new contact, then use the note button to save a quick reminder for that person.
+        </div>
         <h2>Add New Contact</h2>
         <form id="contactForm" method="post">
             <div class="form-group">
@@ -58,30 +64,36 @@
         <div class="contact-item">
             <div>
                 <strong>John Doe</strong><br>
-                <small>john@example.com</small>
+                <small>john@example.com</small><br>
+                <small class="contact-note">No notes yet.</small>
             </div>
             <div class="contact-item-actions">
-                <button class="delete-btn" onclick="deleteContact(this, 'John Doe')">Delete</button>
+                <button type="button" class="button-ghost add-note-btn" data-contact-name="John Doe">Add Note</button>
+                <button type="button" class="delete-btn" data-contact-name="John Doe">Delete</button>
             </div>
         </div>
 
         <div class="contact-item">
             <div>
                 <strong>Jane Smith</strong><br>
-                <small>jane@example.com</small>
+                <small>jane@example.com</small><br>
+                <small class="contact-note">Follow up next week.</small>
             </div>
             <div class="contact-item-actions">
-                <button class="delete-btn" onclick="deleteContact(this, 'Jane Smith')">Delete</button>
+                <button type="button" class="button-ghost add-note-btn" data-contact-name="Jane Smith">Add Note</button>
+                <button type="button" class="delete-btn" data-contact-name="Jane Smith">Delete</button>
             </div>
         </div>
 
         <div class="contact-item">
             <div>
                 <strong>Mike Johnson</strong><br>
-                <small>mike@example.com</small>
+                <small>mike@example.com</small><br>
+                <small class="contact-note">No notes yet.</small>
             </div>
             <div class="contact-item-actions">
-                <button class="delete-btn" onclick="deleteContact(this, 'Mike Johnson')">Delete</button>
+                <button type="button" class="button-ghost add-note-btn" data-contact-name="Mike Johnson">Add Note</button>
+                <button type="button" class="delete-btn" data-contact-name="Mike Johnson">Delete</button>
             </div>
         </div>
     </div>
@@ -89,15 +101,15 @@
 
 {% block scripts %}
 <script>
-    // Delete contact with confirmation
     function deleteContact(button, contactName) {
         showDeleteConfirmation(contactName, function() {
-            // Remove the contact item with animation
             const contactItem = button.closest('.contact-item');
+            if (!contactItem) return;
+
             contactItem.style.opacity = '0';
             contactItem.style.transform = 'translateX(100%)';
             contactItem.style.transition = 'all 0.3s ease';
-            
+
             setTimeout(() => {
                 contactItem.remove();
                 showAlert(`${contactName} has been deleted successfully.`, 'success');
@@ -105,69 +117,129 @@
         });
     }
 
+    function addNoteToContact(button) {
+        const contactItem = button.closest('.contact-item');
+        const contactName = button.dataset.contactName || 'this contact';
+        const noteElement = contactItem ? contactItem.querySelector('.contact-note') : null;
+        const currentNote = noteElement ? noteElement.textContent.replace('Note: ', '') : '';
+        const nextNote = prompt(`Add a note for ${contactName}:`, currentNote === 'No notes yet.' ? '' : currentNote);
+
+        if (nextNote !== null) {
+            const trimmedNote = nextNote.trim();
+            if (noteElement) {
+                noteElement.textContent = trimmedNote ? `Note: ${trimmedNote}` : 'No notes yet.';
+            }
+            if (trimmedNote) {
+                showAlert(`Note saved for ${contactName}.`, 'success');
+            }
+        }
+    }
+
+    function attachContactInteractions() {
+        document.querySelectorAll('.delete-btn').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                deleteContact(this, this.dataset.contactName || 'this contact');
+            });
+        });
+
+        document.querySelectorAll('.add-note-btn').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                addNoteToContact(this);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Setup form validation for contact form
         attachFormValidation('contactForm');
-        
-        // Setup character counter for textarea
+
         const textarea = document.getElementById('contactMessage');
-        textarea.addEventListener('input', function() {
-            const length = this.value.length;
-            const counter = this.parentNode.querySelector('.char-counter') || 
-                          document.createElement('span');
-            counter.className = 'char-counter';
-            counter.textContent = `${length} characters`;
-            if (!this.parentNode.querySelector('.char-counter')) {
-                this.parentNode.appendChild(counter);
-            }
-        });
-        
-        // Setup form submission
-        setupFormSubmission('contactForm', function(form) {
-            const contactName = document.getElementById('contactName').value;
-            
-            // Add new contact to the list
-            const contactsList = document.getElementById('contactsList');
-            const newContact = document.createElement('div');
-            newContact.className = 'contact-item';
-            newContact.style.opacity = '0';
-            newContact.style.transform = 'translateX(-100%)';
-            newContact.style.transition = 'all 0.3s ease';
-            
-            newContact.innerHTML = `
-                <div>
-                    <strong>${contactName}</strong><br>
-                    <small>${document.getElementById('contactEmail').value}</small>
-                </div>
-                <div class="contact-item-actions">
-                    <button class="delete-btn" onclick="deleteContact(this, '${contactName}')">Delete</button>
-                </div>
-            `;
-            
-            contactsList.appendChild(newContact);
-            
-            // Trigger animation
-            setTimeout(() => {
-                newContact.style.opacity = '1';
-                newContact.style.transform = 'translateX(0)';
-            }, 10);
-            
-            // Show success message
-            showAlert(`${contactName} has been added to your contacts!`, 'success');
-            
-            // Clear form
-            form.reset();
-            clearFormErrors('contactForm');
-        });
-        
-        // Setup clear button
-        document.getElementById('clearContactBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to clear all fields?')) {
-                clearForm('contactForm');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                const counter = this.parentNode.querySelector('.char-counter') || document.createElement('span');
+                counter.className = 'char-counter';
+                counter.textContent = `${length} characters`;
+                if (!this.parentNode.querySelector('.char-counter')) {
+                    this.parentNode.appendChild(counter);
+                }
+            });
+        }
+
+        const form = document.getElementById('contactForm');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                if (!validateForm('contactForm')) {
+                    return;
+                }
+
+                const contactName = document.getElementById('contactName').value.trim();
+                const contactEmail = document.getElementById('contactEmail').value.trim();
+                const contactsList = document.getElementById('contactsList');
+                const newContact = document.createElement('div');
+                newContact.className = 'contact-item';
+                newContact.style.opacity = '0';
+                newContact.style.transform = 'translateX(-100%)';
+                newContact.style.transition = 'all 0.3s ease';
+
+                newContact.innerHTML = `
+                    <div>
+                        <strong>${contactName}</strong><br>
+                        <small>${contactEmail}</small><br>
+                        <small class="contact-note">No notes yet.</small>
+                    </div>
+                    <div class="contact-item-actions">
+                        <button type="button" class="button-ghost add-note-btn" data-contact-name="${contactName}">Add Note</button>
+                        <button type="button" class="delete-btn" data-contact-name="${contactName}">Delete</button>
+                    </div>
+                `;
+
+                contactsList.appendChild(newContact);
+                setTimeout(() => {
+                    newContact.style.opacity = '1';
+                    newContact.style.transform = 'translateX(0)';
+                }, 10);
+
+                newContact.querySelector('.add-note-btn').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    addNoteToContact(this);
+                });
+                newContact.querySelector('.delete-btn').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    deleteContact(this, this.dataset.contactName || contactName);
+                });
+
+                showAlert(`${contactName} has been added to your contacts!`, 'success');
+                form.reset();
                 clearFormErrors('contactForm');
-            }
-        });
+            });
+        }
+
+        const clearButton = document.getElementById('clearContactBtn');
+        if (clearButton) {
+            clearButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (confirm('Are you sure you want to clear all fields?')) {
+                    clearForm('contactForm');
+                    clearFormErrors('contactForm');
+                }
+            });
+        }
+
+        const toggleHelpButton = document.getElementById('toggleHelpBtn');
+        const helpPanel = document.getElementById('helpPanel');
+        if (toggleHelpButton && helpPanel) {
+            toggleHelpButton.addEventListener('click', function() {
+                const isHidden = helpPanel.style.display === 'none';
+                helpPanel.style.display = isHidden ? 'block' : 'none';
+                this.textContent = isHidden ? 'Hide help' : 'Show help';
+            });
+        }
+
+        attachContactInteractions();
     });
 </script>
 {% endblock %}

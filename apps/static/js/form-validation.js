@@ -115,9 +115,11 @@ function showFieldError(fieldId, errorMessage) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
     errorDiv.id = `${fieldId}-error`;
+    errorDiv.setAttribute('role', 'alert');
+    errorDiv.setAttribute('aria-live', 'polite');
     errorDiv.textContent = errorMessage;
     
-    field.parentNode.insertBefore(errorDiv, field.nextSibling);
+    field.insertAdjacentElement('afterend', errorDiv);
     return true;
 }
 
@@ -289,13 +291,17 @@ function validatePasswordMatch(passwordFieldId, confirmFieldId) {
     
     if (!passwordField || !confirmField) return false;
     
-    confirmField.addEventListener('blur', function() {
-        if (this.value !== passwordField.value) {
+    function validateMatch() {
+        if (confirmField.value !== passwordField.value) {
             showFieldError(confirmFieldId, 'Passwords do not match');
         } else {
             removeFieldError(confirmFieldId);
         }
-    });
+    }
+
+    confirmField.addEventListener('blur', validateMatch);
+    confirmField.addEventListener('input', validateMatch);
+    passwordField.addEventListener('input', validateMatch);
     
     return true;
 }

@@ -713,12 +713,8 @@
     attachFormValidation('loginForm');
 
     setupFormSubmission('loginForm', function(form) {
-      const email = document.getElementById('emailInput').value;
-      showAlert(`Welcome back, ${email}! Logging you in...`, 'success');
       setLoading(true);
-      setTimeout(function() {
-        form.submit();
-      }, 50);
+      form.submit();
     });
 
     const rememberMeCheckbox = document.getElementById('rememberMe');
