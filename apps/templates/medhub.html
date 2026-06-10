@@ -62,6 +62,18 @@
     <div class="hero-label">Nepal's #1 Hospital Management Platform · Since 2010</div>
     <h1>Book, Manage & Track Your Hospital Appointments — All in One Place</h1>
     <p>Skip the queues. Schedule consultations, manage prescriptions, and access your health records digitally — anytime, from anywhere.</p>
+    <p class="hero-greeting">
+      {% if is_authenticated %}
+        Welcome back, {{ name or "Guest" }}.
+      {% else %}
+        Create an account to manage appointments.
+      {% endif %}
+    </p>
+    <ul class="hero-feature-list">
+      {% for feature in features %}
+        <li>{{ feature }}</li>
+      {% endfor %}
+    </ul>
     <div class="hero-btns">
       <a href="#appointment" class="btn-accent">Book Appointment</a>
       <a href="#services" class="btn-outline">Explore Services</a>

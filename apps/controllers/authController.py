@@ -5,7 +5,17 @@ from apps.database import get_connection
 
 # ---------------- HOME PAGE ----------------
 def home():
-    return render_template("medhub.html", name=session.get("user_name"))
+    features = [
+        "Book appointments quickly",
+        "Track your visit history",
+        "Get reminders for upcoming care",
+    ]
+    return render_template(
+        "medhub.html",
+        name=session.get("user_name"),
+        features=features,
+        is_authenticated=bool(session.get("user_id")),
+    )
 
 
 # ---------------- ABOUT PAGE ----------------
