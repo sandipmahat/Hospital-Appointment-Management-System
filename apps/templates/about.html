@@ -4,9 +4,77 @@
 
 {% block content %}
     <section class="about-section">
-        <h1>About Us</h1>
-        <p>Learn more about our company and what makes us different.</p>
-        <ul>
+        <div class="about-hero">
+            <h1>About Us</h1>
+            <p>Learn more about our company and what makes us different.</p>
+        </div>
+
+        <div class="responsive-design-section">
+            <div class="responsive-intro">
+                <p class="section-tag">Responsive design</p>
+                <h2>Responsive design matters</h2>
+                <p>Responsive design means a website adapts smoothly to phones, tablets, and desktops. It keeps content readable, navigation usable, and forms easy to complete across every screen size.</p>
+            </div>
+
+            <div class="responsive-card-grid">
+                <article class="responsive-card">
+                    <h3>Viewport meta tag</h3>
+                    <p>The viewport meta tag tells mobile browsers to render the page at the device width instead of a desktop width. Without it, pages often feel zoomed out and awkward on smaller screens.</p>
+                </article>
+                <article class="responsive-card">
+                    <h3>Media queries</h3>
+                    <p>Media queries let you change styles at specific breakpoints such as <code>@media (min-width: 768px)</code> for tablets or <code>@media (min-width: 1024px)</code> for desktops.</p>
+                </article>
+                <article class="responsive-card">
+                    <h3>Mobile-first approach</h3>
+                    <p>Starting with the smallest screens first keeps the experience focused, fast, and accessible. Larger screens then get enhanced layouts, wider navigation, and more spacious content.</p>
+                </article>
+            </div>
+
+            <div class="responsive-example">
+                <div class="responsive-example-copy">
+                    <h3>Making images, navbars, forms, and layouts responsive</h3>
+                    <p>Images should scale with <code>max-width: 100%</code>, navigation should wrap cleanly, forms should stack on narrow screens, and layouts should shift from one column to multiple columns as space grows.</p>
+                    <div class="code-block">
+                        <pre><code>img { max-width: 100%; height: auto; }
+
+@media (min-width: 768px) {
+  .layout { grid-template-columns: 1fr 1fr; }
+}</code></pre>
+                    </div>
+                </div>
+                <div class="responsive-preview" aria-label="Responsive page layout preview">
+                    <div class="preview-nav"></div>
+                    <div class="preview-body">
+                        <aside class="preview-sidebar">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </aside>
+                        <div class="preview-main">
+                            <div class="preview-hero"></div>
+                            <div class="preview-grid">
+                                <div class="preview-card"></div>
+                                <div class="preview-card"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="responsive-list">
+                <article class="responsive-list-item">
+                    <h3>Building a full responsive page layout</h3>
+                    <p>Combine flexible grid systems, thoughtful spacing, and progressive enhancements so the same structure works beautifully from a phone to a large monitor.</p>
+                </article>
+                <article class="responsive-list-item">
+                    <h3>Why it matters</h3>
+                    <p>Responsive design improves usability, boosts accessibility, and helps visitors stay engaged regardless of the device they use.</p>
+                </article>
+            </div>
+        </div>
+
+        <ul class="about-company-list">
             {% for u in aboutcompany %}
                 {% if u.name == "softwarica" %}
                     <li>{{ u.name }} - {{ u.address }}</li>

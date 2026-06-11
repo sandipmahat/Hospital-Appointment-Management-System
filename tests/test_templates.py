@@ -26,6 +26,16 @@ class TemplateRenderingTests(unittest.TestCase):
         self.assertIn("&lt;script&gt;", body)
         self.assertNotIn("<script>alert('x')</script>", body)
 
+    def test_about_page_contains_responsive_design_lesson(self):
+        with self.app.test_client() as client:
+            response = client.get("/about")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_data(as_text=True)
+        self.assertIn("Responsive design matters", body)
+        self.assertIn("Viewport meta tag", body)
+        self.assertIn("Mobile-first approach", body)
+
 
 if __name__ == "__main__":
     unittest.main()
