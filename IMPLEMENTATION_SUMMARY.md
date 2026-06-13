@@ -145,6 +145,14 @@ getPasswordStrength(password)
 - Usage examples
 - Next steps
 
+### Flask Session Concepts
+- Cookies are browser-stored data that are sent with requests to the same site.
+- Sessions provide a secure way to persist user state across requests without storing everything directly in the browser.
+- Server-side storage keeps data on the server, while client-side storage keeps data in the browser.
+- Flask uses signed cookies for sessions, which means the session data is protected with a cryptographic signature.
+- The Flask `session` object can be used to store and retrieve data such as user identity.
+- `SECRET_KEY` is required for session security because it allows Flask to sign and verify session data.
+
 ## 📋 Features Implemented
 
 ### Events & Alerts Features

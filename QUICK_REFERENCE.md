@@ -17,6 +17,24 @@ apps/
     └── contact.html              # Contact management with delete confirmation
 ```
 
+## Flask Session Basics
+
+- Cookies are small pieces of data stored by the browser and sent automatically with requests to the same site.
+- Sessions are a higher-level way to maintain user state across requests, usually by storing a session ID in a cookie and keeping the actual data on the server.
+- Server-side storage keeps data on the server (for example in a database or memory store), while client-side storage keeps data in the browser (such as cookies, localStorage, or sessionStorage).
+- Flask handles sessions using signed cookies by default. The session payload is cryptographically signed so Flask can detect tampering.
+- Use the Flask `session` object to store and retrieve values such as `session['user_id']` and `session.get('user_id')`.
+- The `SECRET_KEY` is essential for session security because Flask uses it to sign session data. A strong, secret key prevents attackers from modifying session values.
+
+### Example
+```python
+from flask import session
+
+session['user_id'] = 42
+user_id = session.get('user_id')
+session.clear()
+```
+
 ## Quick Code Snippets
 
 ### Validate Form Before Submission
