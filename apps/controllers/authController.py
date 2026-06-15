@@ -1,6 +1,18 @@
+import re
+
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from apps.database import get_connection
+
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def _get_clean_form_value(field_name, default=""):
+    return request.form.get(field_name, default).strip()
+
+
+def _is_valid_email(email):
+    return bool(EMAIL_PATTERN.fullmatch(email))
 
 
 # ---------------- HOME PAGE ----------------
@@ -40,11 +52,15 @@ def login():
         return redirect(url_for("auth.home"))
 
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "")
+        email = _get_clean_form_value("email", "").lower()
+        password = _get_clean_form_value("password", "")
 
         if not email or not password:
-            flash("Please fill in all fields.", "error")
+            flash("Please enter both email and password.", "error")
+            return render_template("login.html")
+
+        if not _is_valid_email(email):
+            flash("Please enter a valid email address.", "error")
             return render_template("login.html")
 
         conn = get_connection()
@@ -81,12 +97,16 @@ def register():
         return redirect(url_for("auth.home"))
 
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "")
+        name = _get_clean_form_value("name", "")
+        email = _get_clean_form_value("email", "").lower()
+        password = _get_clean_form_value("password", "")
 
         if not name or not email or not password:
             flash("All fields are required.", "error")
+            return render_template("register.html")
+
+        if not _is_valid_email(email):
+            flash("Please enter a valid email address.", "error")
             return render_template("register.html")
 
         if len(password) < 6:
@@ -161,8 +181,8 @@ def dashboard():
 # ---------------- ADMIN APPOINTMENTS ----------------
 def admin_appointments():
     if request.method == "POST":
-        appointment_id = request.form.get("appointment_id")
-        action = request.form.get("action")
+        appointment_id = _get_clean_form_value("appointment_id")
+        action = _get_clean_form_value("action")
         if appointment_id and action in {"approve", "cancel"}:
             status = "approved" if action == "approve" else "cancelled"
             conn = get_connection()
@@ -205,10 +225,10 @@ def book_appointment():
     ]
 
     if request.method == "POST":
-        department = request.form.get("department", "").strip()
-        doctor_name = request.form.get("doctor_name", "").strip()
-        appointment_date = request.form.get("appointment_date", "").strip()
-        appointment_time = request.form.get("appointment_time", "").strip()
+        department = _get_clean_form_value("department", "")
+        doctor_name = _get_clean_form_value("doctor_name", "")
+        appointment_date = _get_clean_form_value("appointment_date", "")
+        appointment_time = _get_clean_form_value("appointment_time", "")
 
         if not department or not doctor_name or not appointment_date or not appointment_time:
             flash("All appointment fields are required.", "error")
@@ -278,14 +298,20 @@ def profile():
         return redirect(url_for("auth.login"))
 
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip()
-        current_password = request.form.get("currentPassword", "")
-        new_password = request.form.get("newPassword", "")
-        confirm_password = request.form.get("confirmPassword", "")
+        name = _get_clean_form_value("name", "")
+        email = _get_clean_form_value("email", "").lower()
+        current_password = _get_clean_form_value("currentPassword", "")
+        new_password = _get_clean_form_value("newPassword", "")
+        confirm_password = _get_clean_form_value("confirmPassword", "")
 
         if not name or not email:
             flash("Name and email are required.", "error")
+            cursor.close()
+            conn.close()
+            return render_template("profile.html", user=user)
+
+        if not _is_valid_email(email):
+            flash("Please enter a valid email address.", "error")
             cursor.close()
             conn.close()
             return render_template("profile.html", user=user)

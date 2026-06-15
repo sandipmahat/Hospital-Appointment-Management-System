@@ -57,6 +57,43 @@ class TemplateRenderingTests(unittest.TestCase):
                 static_response = client.get(asset_path)
                 self.assertEqual(static_response.status_code, 200, msg=f"{asset_path} should be served")
 
+    def test_register_rejects_invalid_email_and_shows_flash_message(self):
+        class DummyCursor:
+            def execute(self, *args, **kwargs):
+                return None
+
+            def fetchone(self):
+                return None
+
+            def close(self):
+                return None
+
+        class DummyConnection:
+            def cursor(self):
+                return DummyCursor()
+
+            def commit(self):
+                raise AssertionError("commit should not be called for invalid input")
+
+            def close(self):
+                return None
+
+        with patch("apps.controllers.authController.get_connection", return_value=DummyConnection()):
+            with self.app.test_client() as client:
+                response = client.post(
+                    "/register",
+                    data={
+                        "name": "Alice",
+                        "email": "not-an-email",
+                        "password": "123456",
+                    },
+                    follow_redirects=True,
+                )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_data(as_text=True)
+        self.assertIn("Please enter a valid email address.", body)
+
 
 if __name__ == "__main__":
     unittest.main()
