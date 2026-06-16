@@ -103,3 +103,65 @@ def create_tables():
     conn.commit()
     cursor.close()
     conn.close()
+
+
+def insert_row(table, allowed_fields, data):
+    """
+    Insert a row into `table` using only keys present in `allowed_fields`.
+    `data` is a mapping (e.g., request.form or dict). Returns the new row id.
+    This prevents mass-assignment by ignoring unexpected fields.
+    """
+    # Filter only permitted columns and preserve order from allowed_fields
+    cols = [col for col in allowed_fields if col in data]
+    if not cols:
+        raise ValueError("No valid fields provided for insert")
+
+    placeholders = ", ".join(["%s"] * len(cols))
+    cols_sql = ", ".join(cols)
+    vals = [data[col] for col in cols]
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        f"INSERT INTO {table} ({cols_sql}) VALUES ({placeholders})",
+        tuple(vals),
+    )
+    conn.commit()
+    row_id = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return row_id
+
+
+def select_one(table, where_clause, params=None, columns="*"):
+    """Return a single row matching `where_clause` (SQL fragment after WHERE).
+    Example: select_one('users', 'id = %s', (user_id,), columns='id, name')
+    """
+    params = params or ()
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = f"SELECT {columns} FROM {table} WHERE {where_clause} LIMIT 1"
+    cursor.execute(sql, params)
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return row
+
+
+def select_all(table, where_clause=None, params=None, columns="*", order_by=None):
+    """Return all rows optionally filtered by `where_clause`.
+    Example: select_all('appointments', 'user_id = %s', (user_id,), order_by='appointment_date ASC')
+    """
+    params = params or ()
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = f"SELECT {columns} FROM {table}"
+    if where_clause:
+        sql += f" WHERE {where_clause}"
+    if order_by:
+        sql += f" ORDER BY {order_by}"
+    cursor.execute(sql, params)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows

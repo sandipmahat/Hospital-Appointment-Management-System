@@ -2,7 +2,7 @@ import re
 
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from apps.database import get_connection
+from apps.database import get_connection, insert_row, select_one, select_all
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -116,7 +116,7 @@ def register():
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
@@ -126,13 +126,12 @@ def register():
             return render_template("register.html")
 
         hashed_password = generate_password_hash(password)
-        cursor.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-            (name, email, hashed_password),
+        # Use insert_row to avoid mass-assignment
+        insert_row(
+            "users",
+            ["name", "email", "password", "role"],
+            {"name": name, "email": email, "password": hashed_password, "role": "user"},
         )
-        conn.commit()
-        cursor.close()
-        conn.close()
 
         flash("Registration successful! You can now log in.", "success")
         return redirect(url_for("auth.login"))
@@ -239,16 +238,24 @@ def book_appointment():
             )
 
         user_id = session["user_id"]
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO appointments (user_id, doctor_name, department, appointment_date, appointment_time) "
-            "VALUES (%s, %s, %s, %s, %s)",
-            (user_id, doctor_name, department, appointment_date, appointment_time),
+        # Use insert_row to accept only allowed columns from form data
+        insert_row(
+            "appointments",
+            [
+                "user_id",
+                "doctor_name",
+                "department",
+                "appointment_date",
+                "appointment_time",
+            ],
+            {
+                "user_id": user_id,
+                "doctor_name": doctor_name,
+                "department": department,
+                "appointment_date": appointment_date,
+                "appointment_time": appointment_time,
+            },
         )
-        conn.commit()
-        cursor.close()
-        conn.close()
 
         flash("Appointment booked successfully. Your request is pending approval.", "success")
         return redirect(url_for("auth.my_appointments"))
@@ -263,18 +270,13 @@ def book_appointment():
 # ---------------- MY APPOINTMENTS ----------------
 def my_appointments():
     user_id = session.get("user_id")
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT id, doctor_name, department, appointment_date, appointment_time, status, created_at "
-        "FROM appointments "
-        "WHERE user_id = %s "
-        "ORDER BY appointment_date ASC, appointment_time ASC",
-        (user_id,),
+    appointments = select_all(
+        "appointments",
+        where_clause="user_id = %s",
+        params=(user_id,),
+        columns="id, doctor_name, department, appointment_date, appointment_time, status, created_at",
+        order_by="appointment_date ASC, appointment_time ASC",
     )
-    appointments = cursor.fetchall()
-    cursor.close()
-    conn.close()
 
     return render_template("my_appointments.html", appointments=appointments)
 
@@ -308,7 +310,8 @@ def profile():
             flash("Name and email are required.", "error")
             cursor.close()
             conn.close()
-            return render_template("profile.html", user=user)
+            safe_user = {k: v for k, v in user.items() if k != "password"}
+            return render_template("profile.html", user=safe_user)
 
         if not _is_valid_email(email):
             flash("Please enter a valid email address.", "error")
@@ -339,19 +342,22 @@ def profile():
                 flash("Current password is incorrect.", "error")
                 cursor.close()
                 conn.close()
-                return render_template("profile.html", user=user)
+                safe_user = {k: v for k, v in user.items() if k != "password"}
+                return render_template("profile.html", user=safe_user)
 
             if new_password != confirm_password:
                 flash("New passwords do not match.", "error")
                 cursor.close()
                 conn.close()
-                return render_template("profile.html", user=user)
+                safe_user = {k: v for k, v in user.items() if k != "password"}
+                return render_template("profile.html", user=safe_user)
 
             if len(new_password) < 6:
                 flash("New password must be at least 6 characters.", "error")
                 cursor.close()
                 conn.close()
-                return render_template("profile.html", user=user)
+                safe_user = {k: v for k, v in user.items() if k != "password"}
+                return render_template("profile.html", user=safe_user)
 
             password_update = generate_password_hash(new_password)
 
@@ -375,7 +381,7 @@ def profile():
 
         flash("Profile updated successfully.", "success")
         return redirect(url_for("auth.profile"))
-
     cursor.close()
     conn.close()
-    return render_template("profile.html", user=user)
+    safe_user = {k: v for k, v in user.items() if k != "password"}
+    return render_template("profile.html", user=safe_user)
