@@ -124,7 +124,7 @@ function togglePasswordVisibility(passwordInputId, toggleButtonId) {
         toggleButton.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️ Show' : '🔒 Hide';
+            this.textContent = type === 'password' ? 'Show' : 'Hide';
         });
         return true;
     }
@@ -189,7 +189,7 @@ function setButtonLoading(buttonId, isLoading = true) {
     if (button) {
         if (isLoading) {
             button.dataset.originalText = button.textContent;
-            button.textContent = '⏳ Loading...';
+            button.textContent = 'Loading...';
             button.disabled = true;
         } else {
             button.textContent = button.dataset.originalText || 'Submit';

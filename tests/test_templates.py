@@ -26,6 +26,15 @@ class TemplateRenderingTests(unittest.TestCase):
         self.assertIn("&lt;script&gt;", body)
         self.assertNotIn("<script>alert('x')</script>", body)
 
+    def test_home_page_is_public_and_links_to_login(self):
+        with self.app.test_client() as client:
+            response = client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_data(as_text=True)
+        self.assertIn('href="/login"', body)
+        self.assertIn("Create an account to manage appointments.", body)
+
     def test_about_page_contains_responsive_design_lesson(self):
         with self.app.test_client() as client:
             response = client.get("/about")
@@ -55,7 +64,10 @@ class TemplateRenderingTests(unittest.TestCase):
         with self.app.test_client() as client:
             for asset_path in expected_paths:
                 static_response = client.get(asset_path)
-                self.assertEqual(static_response.status_code, 200, msg=f"{asset_path} should be served")
+                try:
+                    self.assertEqual(static_response.status_code, 200, msg=f"{asset_path} should be served")
+                finally:
+                    static_response.close()
 
     def test_register_rejects_invalid_email_and_shows_flash_message(self):
         class DummyCursor:
@@ -86,6 +98,7 @@ class TemplateRenderingTests(unittest.TestCase):
                         "name": "Alice",
                         "email": "not-an-email",
                         "password": "123456",
+                        "confirmPassword": "123456",
                     },
                     follow_redirects=True,
                 )
@@ -93,6 +106,23 @@ class TemplateRenderingTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.get_data(as_text=True)
         self.assertIn("Please enter a valid email address.", body)
+
+    def test_register_rejects_mismatched_password_confirmation(self):
+        with self.app.test_client() as client:
+            response = client.post(
+                "/register",
+                data={
+                    "name": "Alice",
+                    "email": "alice@example.com",
+                    "password": "123456",
+                    "confirmPassword": "abcdef",
+                },
+                follow_redirects=True,
+            )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.get_data(as_text=True)
+        self.assertIn("Passwords do not match.", body)
 
 
 if __name__ == "__main__":

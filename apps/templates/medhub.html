@@ -50,8 +50,13 @@
       <li><a href="#departments">Departments</a></li>
       <li><a href="#doctors">Doctors</a></li>
       <li><a href="#contact">Contact</a></li>
+      {% if is_authenticated %}
+      <li><a href="{{ url_for('auth.my_appointments') }}">My Appointments</a></li>
+      {% else %}
+      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+      {% endif %}
     </ul>
-    <a href="#appointment" class="btn-primary">Book Appointment</a>
+    <a href="{{ url_for('auth.book_appointment') }}" class="btn-primary">Book Appointment</a>
   </div>
 </nav>
 {% endblock %}
@@ -75,7 +80,7 @@
       {% endfor %}
     </ul>
     <div class="hero-btns">
-      <a href="#appointment" class="btn-accent">Book Appointment</a>
+      <a href="{{ url_for('auth.book_appointment') }}" class="btn-accent">Book Appointment</a>
       <a href="#services" class="btn-outline">Explore Services</a>
     </div>
     <div class="hero-pills">
@@ -364,7 +369,7 @@
           <h4>Dr. Sita Sharma</h4>
           <span class="specialty">Cardiologist</span>
           <div class="avail"><div class="avail-dot"></div> Available Today</div>
-          <a href="#appointment" class="team-btn">Book Appointment</a>
+          <a href="{{ url_for('auth.book_appointment') }}" class="team-btn">Book Appointment</a>
         </div>
       </div>
       <div class="team-card">
@@ -376,7 +381,7 @@
           <h4>Dr. Ram Adhikari</h4>
           <span class="specialty">Neurologist</span>
           <div class="avail"><div class="avail-dot"></div> Available Today</div>
-          <a href="#appointment" class="team-btn">Book Appointment</a>
+          <a href="{{ url_for('auth.book_appointment') }}" class="team-btn">Book Appointment</a>
         </div>
       </div>
       <div class="team-card">
@@ -388,7 +393,7 @@
           <h4>Dr. Priya Thapa</h4>
           <span class="specialty">Pediatrician</span>
           <div class="avail"><div class="avail-dot"></div> Available Tomorrow</div>
-          <a href="#appointment" class="team-btn">Book Appointment</a>
+          <a href="{{ url_for('auth.book_appointment') }}" class="team-btn">Book Appointment</a>
         </div>
       </div>
       <div class="team-card">
@@ -400,7 +405,7 @@
           <h4>Dr. Bikash Rai</h4>
           <span class="specialty">Orthopedic Surgeon</span>
           <div class="avail"><div class="avail-dot"></div> Available Today</div>
-          <a href="#appointment" class="team-btn">Book Appointment</a>
+          <a href="{{ url_for('auth.book_appointment') }}" class="team-btn">Book Appointment</a>
         </div>
       </div>
     </div>

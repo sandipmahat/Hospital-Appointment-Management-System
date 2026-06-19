@@ -3,8 +3,16 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <p>Welcome back! You are logged in.</p>
+    <div class="dashboard-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome back! You are logged in.</p>
+        </div>
+        <div class="dashboard-actions">
+            <a class="button-ghost" href="{{ url_for('auth.home') }}">Home</a>
+            <a class="button-secondary" href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+    </div>
 
     {% if users %}
         <section class="dashboard-table">

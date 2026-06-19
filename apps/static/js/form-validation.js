@@ -264,15 +264,15 @@ function updatePasswordStrength(passwordInputId, strengthIndicatorId) {
         let color = '';
         switch(strength) {
             case 'weak':
-                text = '❌ Weak';
+                text = 'Weak';
                 color = '#d32f2f';
                 break;
             case 'medium':
-                text = '⚠️ Medium';
+                text = 'Medium';
                 color = '#f57c00';
                 break;
             case 'strong':
-                text = '✅ Strong';
+                text = 'Strong';
                 color = '#388e3c';
                 break;
         }

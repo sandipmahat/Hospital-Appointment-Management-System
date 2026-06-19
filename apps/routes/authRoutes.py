@@ -4,7 +4,7 @@ from apps.auth import login_required, admin_required
 
 bp = Blueprint("auth", __name__)
 
-bp.route("/")(login_required(authController.home))
+bp.route("/")(authController.home)
 bp.route("/login", methods=["GET", "POST"])(authController.login)
 bp.route("/register", methods=["GET", "POST"])(authController.register)
 bp.route("/contact")(authController.contact)

@@ -281,7 +281,9 @@ select {
     padding-right: 44px;
 }
 
-button {
+button,
+a.button-secondary,
+a.button-ghost {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -293,6 +295,7 @@ button {
     border-radius: 12px;
     cursor: pointer;
     font-weight: 700;
+    text-decoration: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
 }
 
@@ -352,14 +355,6 @@ button:hover {
     width: auto;
     margin: 0;
     accent-color: var(--primary-blue);
-}
-
-a.button-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
 }
 
 .inline-link {
@@ -451,6 +446,20 @@ a.button-ghost {
 
 .dashboard-table {
     margin-top: 28px;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .dashboard-table h2 {

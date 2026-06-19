@@ -100,13 +100,18 @@ def register():
         name = _get_clean_form_value("name", "")
         email = _get_clean_form_value("email", "").lower()
         password = _get_clean_form_value("password", "")
+        confirm_password = _get_clean_form_value("confirmPassword", "")
 
-        if not name or not email or not password:
+        if not name or not email or not password or not confirm_password:
             flash("All fields are required.", "error")
             return render_template("register.html")
 
         if not _is_valid_email(email):
             flash("Please enter a valid email address.", "error")
+            return render_template("register.html")
+
+        if password != confirm_password:
+            flash("Passwords do not match.", "error")
             return render_template("register.html")
 
         if len(password) < 6:
@@ -124,6 +129,9 @@ def register():
             conn.close()
             flash("This email is already registered.", "error")
             return render_template("register.html")
+
+        cursor.close()
+        conn.close()
 
         hashed_password = generate_password_hash(password)
         # Use insert_row to avoid mass-assignment

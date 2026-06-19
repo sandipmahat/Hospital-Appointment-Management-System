@@ -546,7 +546,7 @@
   <div class="form-panel">
     <div class="brand">
       <div class="brand-icon" aria-hidden="true">
-        <i class="ti ti-plus"></i>
+        <i class="fa-solid fa-plus"></i>
       </div>
       <div class="brand-text">
         <h1>MediCare Portal</h1>
@@ -561,7 +561,7 @@
       <input type="hidden" id="roleInput" name="role" value="Patient">
 
       <div class="error-box" id="errorBox" role="alert" aria-live="polite">
-        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
         <span id="errorText">Invalid credentials. Please try again.</span>
       </div>
 
@@ -569,15 +569,15 @@
         <label class="field-label">Sign in as</label>
         <div class="role-grid" role="group" aria-label="Select your role">
           <button class="role-btn active" type="button" onclick="selectRole(this, 'Patient')" aria-pressed="true">
-            <i class="ti ti-user" aria-hidden="true"></i>
+            <i class="fa-solid fa-user" aria-hidden="true"></i>
             Patient
           </button>
           <button class="role-btn" type="button" onclick="selectRole(this, 'Doctor')" aria-pressed="false">
-            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+            <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
             Doctor
           </button>
           <button class="role-btn" type="button" onclick="selectRole(this, 'Admin')" aria-pressed="false">
-            <i class="ti ti-shield-check" aria-hidden="true"></i>
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
             Admin
           </button>
         </div>
@@ -586,7 +586,7 @@
       <div class="field">
         <label class="field-label" for="emailInput">Email address</label>
         <div class="input-wrap">
-          <i class="ti ti-mail icon-left" aria-hidden="true"></i>
+          <i class="fa-solid fa-envelope icon-left" aria-hidden="true"></i>
           <input
             type="email"
             id="emailInput"
@@ -602,7 +602,7 @@
       <div class="field">
         <label class="field-label" for="passInput">Password</label>
         <div class="input-wrap">
-          <i class="ti ti-lock icon-left" aria-hidden="true"></i>
+          <i class="fa-solid fa-lock icon-left" aria-hidden="true"></i>
           <input
             type="password"
             id="passInput"
@@ -612,7 +612,7 @@
             data-validate="required,password"
           />
           <button class="eye-toggle" type="button" id="togglePasswordBtn" aria-label="Show password">
-            <i class="ti ti-eye" id="eyeIcon"></i>
+            <i class="fa-solid fa-eye" id="eyeIcon"></i>
           </button>
         </div>
         <div class="forgot-row">
@@ -629,7 +629,7 @@
 
       <button class="submit-btn" id="submitBtn" type="submit">
         <div class="spinner" id="spinner"></div>
-        <i class="ti ti-login" id="submitIcon" aria-hidden="true"></i>
+        <i class="fa-solid fa-right-to-bracket" id="submitIcon" aria-hidden="true"></i>
         <span id="submitLabel">Sign in securely</span>
       </button>
 
@@ -649,7 +649,7 @@
 
     <div class="visual-content">
       <div class="visual-icon-ring">
-        <i class="ti ti-calendar-heart"></i>
+        <i class="fa-solid fa-calendar-check"></i>
       </div>
 
       <p class="visual-heading">
@@ -679,15 +679,15 @@
 
       <div class="feature-pills">
         <div class="pill">
-          <i class="ti ti-calendar-check" aria-hidden="true"></i>
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
           Easy appointment booking
         </div>
         <div class="pill">
-          <i class="ti ti-bell" aria-hidden="true"></i>
+          <i class="fa-solid fa-bell" aria-hidden="true"></i>
           Automated reminders
         </div>
         <div class="pill">
-          <i class="ti ti-file-medical" aria-hidden="true"></i>
+          <i class="fa-solid fa-file-medical" aria-hidden="true"></i>
           Digital health records
         </div>
       </div>
@@ -696,7 +696,7 @@
 
   <div class="success-overlay" id="successOverlay" role="status" aria-live="polite">
     <div class="check-ring">
-      <i class="ti ti-check"></i>
+      <i class="fa-solid fa-check"></i>
     </div>
     <h2 class="success-title">Login successful</h2>
     <p class="success-sub">Redirecting to your <strong id="roleLabel">Patient</strong> dashboard&hellip;</p>
@@ -728,6 +728,7 @@
 
     addFocusHighlight('emailInput');
     addFocusHighlight('passInput');
+    document.getElementById('togglePasswordBtn')?.addEventListener('click', togglePass);
   });
 
   let selectedRole = 'Patient';
@@ -773,11 +774,11 @@
 
     if (passInput.type === 'password') {
       passInput.type = 'text';
-      eyeIcon.className = 'ti ti-eye-off';
+      eyeIcon.className = 'fa-solid fa-eye-slash';
       toggleButton.setAttribute('aria-label', 'Hide password');
     } else {
       passInput.type = 'password';
-      eyeIcon.className = 'ti ti-eye';
+      eyeIcon.className = 'fa-solid fa-eye';
       toggleButton.setAttribute('aria-label', 'Show password');
     }
   }
