@@ -55,8 +55,8 @@ function showAlert(message, type = 'info') {
 }
 
 // Show prompt and get user input
-function getUserInput(prompt, defaultValue = '') {
-    return prompt(prompt, defaultValue);
+function getUserInput(message, defaultValue = '') {
+    return window.prompt(message, defaultValue);
 }
 
 // Attach event listener with error handling
@@ -125,6 +125,7 @@ function togglePasswordVisibility(passwordInputId, toggleButtonId) {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             this.textContent = type === 'password' ? 'Show' : 'Hide';
+            this.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
         });
         return true;
     }

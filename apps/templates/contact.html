@@ -185,17 +185,37 @@
                 newContact.style.transform = 'translateX(-100%)';
                 newContact.style.transition = 'all 0.3s ease';
 
-                newContact.innerHTML = `
-                    <div>
-                        <strong>${contactName}</strong><br>
-                        <small>${contactEmail}</small><br>
-                        <small class="contact-note">No notes yet.</small>
-                    </div>
-                    <div class="contact-item-actions">
-                        <button type="button" class="button-ghost add-note-btn" data-contact-name="${contactName}">Add Note</button>
-                        <button type="button" class="delete-btn" data-contact-name="${contactName}">Delete</button>
-                    </div>
-                `;
+                const contactDetails = document.createElement('div');
+                const contactNameElement = document.createElement('strong');
+                const contactEmailElement = document.createElement('small');
+                const contactNoteElement = document.createElement('small');
+                const contactActions = document.createElement('div');
+                const addNoteButton = document.createElement('button');
+                const deleteButton = document.createElement('button');
+
+                contactNameElement.textContent = contactName;
+                contactEmailElement.textContent = contactEmail;
+                contactNoteElement.className = 'contact-note';
+                contactNoteElement.textContent = 'No notes yet.';
+                contactActions.className = 'contact-item-actions';
+                addNoteButton.type = 'button';
+                addNoteButton.className = 'button-ghost add-note-btn';
+                addNoteButton.dataset.contactName = contactName;
+                addNoteButton.textContent = 'Add Note';
+                deleteButton.type = 'button';
+                deleteButton.className = 'delete-btn';
+                deleteButton.dataset.contactName = contactName;
+                deleteButton.textContent = 'Delete';
+
+                contactDetails.append(
+                    contactNameElement,
+                    document.createElement('br'),
+                    contactEmailElement,
+                    document.createElement('br'),
+                    contactNoteElement
+                );
+                contactActions.append(addNoteButton, deleteButton);
+                newContact.append(contactDetails, contactActions);
 
                 contactsList.appendChild(newContact);
                 setTimeout(() => {
