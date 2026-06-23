@@ -7,6 +7,7 @@
     <p>Update your account details and password below.</p>
 
     <form id="profileForm" method="post" class="form-card">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name"

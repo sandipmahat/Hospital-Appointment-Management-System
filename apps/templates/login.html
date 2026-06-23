@@ -558,6 +558,7 @@
     <p class="form-sub">Sign in to access your hospital dashboard and appointments.</p>
 
     <form id="loginForm" method="post" action="{{ url_for('auth.login') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" id="roleInput" name="role" value="Patient">
 
       <div class="error-box" id="errorBox" role="alert" aria-live="polite">

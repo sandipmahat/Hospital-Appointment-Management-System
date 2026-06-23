@@ -11,6 +11,7 @@ def login_user(user):
     session["user_name"] = user.get("name")
     session["user_email"] = user.get("email")
     session["user_role"] = user.get("role", "user")
+    session.permanent = True
 
 
 def login_required(view):

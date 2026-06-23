@@ -3,6 +3,39 @@ import pymysql.err
 import config
 
 
+def _index_exists(cursor, table_name, index_name):
+    cursor.execute(
+        """
+        SELECT 1
+        FROM information_schema.statistics
+        WHERE table_schema = %s AND table_name = %s AND index_name = %s
+        LIMIT 1
+        """,
+        (config.MYSQL_DATABASE, table_name, index_name),
+    )
+    return cursor.fetchone() is not None
+
+
+def _add_index(cursor, table_name, index_name, columns):
+    if not _index_exists(cursor, table_name, index_name):
+        cursor.execute(
+            f"CREATE INDEX `{index_name}` ON `{table_name}` ({columns})"
+        )
+
+
+def _column_exists(cursor, table_name, column_name):
+    cursor.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = %s AND table_name = %s AND column_name = %s
+        LIMIT 1
+        """,
+        (config.MYSQL_DATABASE, table_name, column_name),
+    )
+    return cursor.fetchone() is not None
+
+
 def get_connection():
     """Return a pymysql connection. If the configured database does not exist,
     create it and retry the connection.
@@ -10,6 +43,7 @@ def get_connection():
     try:
         conn = pymysql.connect(
             host=config.MYSQL_HOST,
+            port=config.MYSQL_PORT,
             user=config.MYSQL_USER,
             password=config.MYSQL_PASSWORD,
             database=config.MYSQL_DATABASE,
@@ -31,6 +65,7 @@ def get_connection():
             # Connect without specifying a database to create it
             conn = pymysql.connect(
                 host=config.MYSQL_HOST,
+                port=config.MYSQL_PORT,
                 user=config.MYSQL_USER,
                 password=config.MYSQL_PASSWORD,
                 cursorclass=pymysql.cursors.DictCursor,
@@ -45,6 +80,7 @@ def get_connection():
             # Retry connection to the newly created database
             conn = pymysql.connect(
                 host=config.MYSQL_HOST,
+                port=config.MYSQL_PORT,
                 user=config.MYSQL_USER,
                 password=config.MYSQL_PASSWORD,
                 database=config.MYSQL_DATABASE,
@@ -78,6 +114,15 @@ def create_tables():
             )
         """)
 
+        if not _column_exists(cursor, "appointments", "updated_at"):
+            cursor.execute(
+                """
+                ALTER TABLE appointments
+                ADD COLUMN updated_at TIMESTAMP
+                DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                """
+            )
+
         cursor.execute("SELECT id FROM users WHERE email = %s", ("admin@admin.com",))
         if not cursor.fetchone():
             from werkzeug.security import generate_password_hash
@@ -97,9 +142,27 @@ def create_tables():
                 appointment_time TIME NOT NULL,
                 status VARCHAR(20) NOT NULL DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
+
+        _add_index(cursor, "users", "idx_users_role", "`role`")
+        _add_index(cursor, "users", "idx_users_created_at", "`created_at`")
+        _add_index(cursor, "appointments", "idx_appointments_user_id", "`user_id`")
+        _add_index(cursor, "appointments", "idx_appointments_status", "`status`")
+        _add_index(
+            cursor,
+            "appointments",
+            "idx_appointments_schedule",
+            "`appointment_date`, `appointment_time`",
+        )
+        _add_index(
+            cursor,
+            "appointments",
+            "idx_appointments_user_status",
+            "`user_id`, `status`",
+        )
 
         conn.commit()
     finally:

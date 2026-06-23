@@ -1,10 +1,28 @@
 import re
+from datetime import date, datetime
 
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from apps.auth import login_user
 from apps.database import get_connection, insert_row, select_one, select_all
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+DEPARTMENTS = (
+    "Cardiology",
+    "Neurology",
+    "Pediatrics",
+    "Orthopedics",
+    "Dermatology",
+    "General Medicine",
+)
+DOCTORS = (
+    "Dr. Sharma",
+    "Dr. Koirala",
+    "Dr. Singh",
+    "Dr. Thapa",
+    "Dr. Kumar",
+    "Dr. Joshi",
+)
 
 
 def _get_clean_form_value(field_name, default=""):
@@ -13,6 +31,30 @@ def _get_clean_form_value(field_name, default=""):
 
 def _is_valid_email(email):
     return bool(EMAIL_PATTERN.fullmatch(email))
+
+
+def _appointment_form_data():
+    return {
+        "department": _get_clean_form_value("department"),
+        "doctor_name": _get_clean_form_value("doctor_name"),
+        "appointment_date": _get_clean_form_value("appointment_date"),
+        "appointment_time": _get_clean_form_value("appointment_time"),
+    }
+
+
+def _validate_appointment(data):
+    if not all(data.values()):
+        return "All appointment fields are required."
+    if data["department"] not in DEPARTMENTS or data["doctor_name"] not in DOCTORS:
+        return "Please select a valid department and doctor."
+    try:
+        appointment_day = date.fromisoformat(data["appointment_date"])
+        datetime.strptime(data["appointment_time"], "%H:%M")
+    except ValueError:
+        return "Please enter a valid appointment date and time."
+    if appointment_day < date.today():
+        return "Appointments cannot be booked in the past."
+    return None
 
 
 # ---------------- HOME PAGE ----------------
@@ -73,10 +115,8 @@ def login():
         conn.close()
 
         if user and check_password_hash(user["password"], password):
-            session["user_id"] = user["id"]
-            session["user_name"] = user["name"]
-            session["user_email"] = user["email"]
-            session["user_role"] = user.get("role", "user")
+            session.clear()
+            login_user(user)
 
             flash("Login successful!", "success")
             if session["user_role"] == "admin":
@@ -217,35 +257,16 @@ def admin_appointments():
 
 # ---------------- BOOK APPOINTMENT ----------------
 def book_appointment():
-    departments = [
-        "Cardiology",
-        "Neurology",
-        "Pediatrics",
-        "Orthopedics",
-        "Dermatology",
-        "General Medicine",
-    ]
-    doctors = [
-        "Dr. Sharma",
-        "Dr. Koirala",
-        "Dr. Singh",
-        "Dr. Thapa",
-        "Dr. Kumar",
-        "Dr. Joshi",
-    ]
-
     if request.method == "POST":
-        department = _get_clean_form_value("department", "")
-        doctor_name = _get_clean_form_value("doctor_name", "")
-        appointment_date = _get_clean_form_value("appointment_date", "")
-        appointment_time = _get_clean_form_value("appointment_time", "")
-
-        if not department or not doctor_name or not appointment_date or not appointment_time:
-            flash("All appointment fields are required.", "error")
+        form_data = _appointment_form_data()
+        validation_error = _validate_appointment(form_data)
+        if validation_error:
+            flash(validation_error, "error")
             return render_template(
                 "book_appointment.html",
-                departments=departments,
-                doctors=doctors,
+                departments=DEPARTMENTS,
+                doctors=DOCTORS,
+                appointment=form_data,
             )
 
         user_id = session["user_id"]
@@ -261,10 +282,7 @@ def book_appointment():
             ],
             {
                 "user_id": user_id,
-                "doctor_name": doctor_name,
-                "department": department,
-                "appointment_date": appointment_date,
-                "appointment_time": appointment_time,
+                **form_data,
             },
         )
 
@@ -273,9 +291,96 @@ def book_appointment():
 
     return render_template(
         "book_appointment.html",
-        departments=departments,
-        doctors=doctors,
+        departments=DEPARTMENTS,
+        doctors=DOCTORS,
+        appointment={},
     )
+
+
+def edit_appointment(appointment_id):
+    user_id = session["user_id"]
+    appointment = select_one(
+        "appointments",
+        "id = %s AND user_id = %s",
+        (appointment_id, user_id),
+        columns=(
+            "id, doctor_name, department, appointment_date, "
+            "appointment_time, status"
+        ),
+    )
+    if not appointment:
+        flash("Appointment not found or access denied.", "error")
+        return redirect(url_for("auth.my_appointments"))
+
+    if appointment["status"] not in {"pending", "cancelled"}:
+        flash("Only pending or cancelled appointments can be edited.", "error")
+        return redirect(url_for("auth.my_appointments"))
+
+    if request.method == "POST":
+        form_data = _appointment_form_data()
+        validation_error = _validate_appointment(form_data)
+        if validation_error:
+            flash(validation_error, "error")
+            appointment.update(form_data)
+            return render_template(
+                "book_appointment.html",
+                departments=DEPARTMENTS,
+                doctors=DOCTORS,
+                appointment=appointment,
+                editing=True,
+            )
+
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE appointments
+            SET doctor_name = %s, department = %s, appointment_date = %s,
+                appointment_time = %s, status = 'pending'
+            WHERE id = %s AND user_id = %s
+            """,
+            (
+                form_data["doctor_name"],
+                form_data["department"],
+                form_data["appointment_date"],
+                form_data["appointment_time"],
+                appointment_id,
+                user_id,
+            ),
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("Appointment updated successfully.", "success")
+        return redirect(url_for("auth.my_appointments"))
+
+    return render_template(
+        "book_appointment.html",
+        departments=DEPARTMENTS,
+        doctors=DOCTORS,
+        appointment=appointment,
+        editing=True,
+    )
+
+
+def delete_appointment(appointment_id):
+    user_id = session["user_id"]
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM appointments WHERE id = %s AND user_id = %s",
+        (appointment_id, user_id),
+    )
+    deleted = cursor.rowcount
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(
+        "Appointment deleted." if deleted else "Appointment not found or access denied.",
+        "success" if deleted else "error",
+    )
+    return redirect(url_for("auth.my_appointments"))
 
 
 # ---------------- MY APPOINTMENTS ----------------

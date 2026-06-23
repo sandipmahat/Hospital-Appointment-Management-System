@@ -5,15 +5,16 @@
 {% block content %}
     <section class="section-padding">
         <div class="container">
-            <h1>Book Appointment</h1>
-            <p>Choose your preferred department, doctor, date, and time.</p>
+            <h1>{{ "Edit Appointment" if editing else "Book Appointment" }}</h1>
+            <p>{{ "Update your booking details below." if editing else "Choose your preferred department, doctor, date, and time." }}</p>
             <form method="post" class="form-card">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-row">
                     <label for="department">Department</label>
                     <select id="department" name="department" required>
                         <option value="">Select department</option>
                         {% for department in departments %}
-                            <option value="{{ department }}">{{ department }}</option>
+                            <option value="{{ department }}" {% if appointment.department == department %}selected{% endif %}>{{ department }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -22,20 +23,23 @@
                     <select id="doctor_name" name="doctor_name" required>
                         <option value="">Select doctor</option>
                         {% for doctor in doctors %}
-                            <option value="{{ doctor }}">{{ doctor }}</option>
+                            <option value="{{ doctor }}" {% if appointment.doctor_name == doctor %}selected{% endif %}>{{ doctor }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-row">
                     <label for="appointment_date">Appointment Date</label>
-                    <input type="date" id="appointment_date" name="appointment_date" required>
+                    <input type="date" id="appointment_date" name="appointment_date" value="{{ appointment.appointment_date or '' }}" required>
                 </div>
                 <div class="form-row">
                     <label for="appointment_time">Appointment Time</label>
-                    <input type="time" id="appointment_time" name="appointment_time" required>
+                    <input type="time" id="appointment_time" name="appointment_time" value="{{ appointment.appointment_time or '' }}" required>
                 </div>
                 <div class="form-row">
-                    <button type="submit" class="btn-primary">Book Appointment</button>
+                    <button type="submit" class="btn-primary">{{ "Save Changes" if editing else "Book Appointment" }}</button>
+                    {% if editing %}
+                        <a href="{{ url_for('auth.my_appointments') }}" class="button-ghost">Cancel</a>
+                    {% endif %}
                 </div>
             </form>
         </div>

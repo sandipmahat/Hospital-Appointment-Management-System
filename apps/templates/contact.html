@@ -15,6 +15,7 @@
         </div>
         <h2>Add New Contact</h2>
         <form id="contactForm" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="contactName">Contact Name</label>
                 <input type="text" id="contactName" name="contactName"

@@ -19,6 +19,7 @@
                                 <th>Time</th>
                                 <th>Status</th>
                                 <th>Booked On</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,8 +30,17 @@
                                     <td>{{ appt.department }}</td>
                                     <td>{{ appt.appointment_date }}</td>
                                     <td>{{ appt.appointment_time }}</td>
-                                    <td>{{ appt.status }}</td>
+                                    <td><span class="status-badge">{{ appt.status }}</span></td>
                                     <td>{{ appt.created_at }}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="{{ url_for('auth.edit_appointment', appointment_id=appt.id) }}" class="button-ghost">Edit</a>
+                                            <form method="post" action="{{ url_for('auth.delete_appointment', appointment_id=appt.id) }}" onsubmit="return confirm('Delete this appointment?');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="delete-btn">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

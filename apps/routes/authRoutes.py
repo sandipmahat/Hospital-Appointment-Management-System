@@ -13,6 +13,12 @@ bp.route("/dashboard")(admin_required(authController.dashboard))
 bp.route("/admin/appointments", methods=["GET", "POST"])(admin_required(authController.admin_appointments))
 bp.route("/book-appointment", methods=["GET", "POST"])(login_required(authController.book_appointment))
 bp.route("/my-appointments")(login_required(authController.my_appointments))
+bp.route("/appointments/<int:appointment_id>/edit", methods=["GET", "POST"])(
+    login_required(authController.edit_appointment)
+)
+bp.route("/appointments/<int:appointment_id>/delete", methods=["POST"])(
+    login_required(authController.delete_appointment)
+)
 bp.route("/logout")(login_required(authController.logout))
 bp.route("/profile", methods=["GET", "POST"])(login_required(authController.profile))
 
