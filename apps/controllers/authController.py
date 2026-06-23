@@ -57,11 +57,11 @@ def login():
 
         if not email or not password:
             flash("Please enter both email and password.", "error")
-            return render_template("login.html")
+            return render_template("login.html", submitted_email=email)
 
         if not _is_valid_email(email):
             flash("Please enter a valid email address.", "error")
-            return render_template("login.html")
+            return render_template("login.html", submitted_email=email)
 
         conn = get_connection()
         cursor = conn.cursor()
@@ -86,7 +86,10 @@ def login():
 
         flash("Wrong email or password.", "error")
 
-    return render_template("login.html")
+    return render_template(
+        "login.html",
+        submitted_email=_get_clean_form_value("email", "").lower(),
+    )
 
 
 # ---------------- REGISTER FUNCTION ----------------

