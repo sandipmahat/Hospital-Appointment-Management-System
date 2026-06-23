@@ -473,6 +473,44 @@ button:hover {
     overflow-x: auto;
 }
 
+.table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-actions form {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--light-blue-fill);
+    color: var(--nav-background);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.error-page {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    text-align: center;
+}
+
+.error-page p {
+    margin-bottom: 24px;
+    color: var(--muted-text);
+}
+
 table {
     width: 100%;
     border-collapse: collapse;

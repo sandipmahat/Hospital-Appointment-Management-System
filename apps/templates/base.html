@@ -11,9 +11,9 @@
 <body>
     {% block header %}
     <header>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/contact">Contact</a>
+        <nav aria-label="Primary navigation">
+            <a href="{{ url_for('auth.home') }}">Home</a>
+            <a href="{{ url_for('auth.contact') }}">Contact</a>
             <a href="{{ url_for('auth.about') }}">About</a>
             {% if session.get('user_id') %}
                 <a href="{{ url_for('auth.profile') }}">Profile</a>
@@ -35,7 +35,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="message {{ category }}">{{ message }}</div>
+                    <div class="message {{ category }}" role="alert">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
