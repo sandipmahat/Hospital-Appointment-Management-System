@@ -1,14 +1,17 @@
 import unittest
-from unittest.mock import patch
-
 from apps import create_apps
 
 
 class TemplateRenderingTests(unittest.TestCase):
     def setUp(self):
-        with patch("apps.create_tables", return_value=None):
-            self.app = create_apps()
-        self.app.testing = True
+        self.app = create_apps(
+            {
+                "TESTING": True,
+                "INIT_DB": False,
+                "CSRF_ENABLED": False,
+                "SECRET_KEY": "test-secret",
+            }
+        )
 
     def test_home_page_renders_dynamic_jinja_content_and_escapes_user_input(self):
         with self.app.test_client() as client:
@@ -89,6 +92,8 @@ class TemplateRenderingTests(unittest.TestCase):
 
             def close(self):
                 return None
+
+        from unittest.mock import patch
 
         with patch("apps.controllers.authController.get_connection", return_value=DummyConnection()):
             with self.app.test_client() as client:
