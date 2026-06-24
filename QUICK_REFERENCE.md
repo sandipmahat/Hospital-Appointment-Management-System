@@ -35,6 +35,13 @@ user_id = session.get('user_id')
 session.clear()
 ```
 
+## Local Startup Checklist
+
+1. Copy `.env.example` to `.env`.
+2. Update the MySQL username and password for your local server.
+3. Keep `INIT_DB=true` when you want Flask to create or update tables.
+4. Run `python run.py` and open `http://127.0.0.1:5000`.
+
 ## Quick Code Snippets
 
 ### Validate Form Before Submission
