@@ -124,6 +124,10 @@ filtering, and chronological sorting.
    database. The application creates the database and required tables when
    `INIT_DB=true`.
 
+6. Confirm the configured MySQL service is running before starting the Flask
+   app. If you only need to preview static pages, set `INIT_DB=false` while
+   developing locally.
+
 ## Environment Variables
 
 | Variable | Purpose |
