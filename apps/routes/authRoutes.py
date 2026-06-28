@@ -19,7 +19,7 @@ bp.route("/appointments/<int:appointment_id>/edit", methods=["GET", "POST"])(
 bp.route("/appointments/<int:appointment_id>/delete", methods=["POST"])(
     login_required(authController.delete_appointment)
 )
-bp.route("/logout")(login_required(authController.logout))
+bp.route("/logout", methods=["POST"])(login_required(authController.logout))
 bp.route("/profile", methods=["GET", "POST"])(login_required(authController.profile))
 
 

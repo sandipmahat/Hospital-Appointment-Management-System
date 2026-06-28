@@ -588,6 +588,28 @@ nav a:hover {
     transform: translateY(-1px);
 }
 
+.nav-logout-form,
+.inline-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-logout-button {
+    min-height: auto;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--surface-white);
+    font: inherit;
+}
+
+.nav-logout-button:hover {
+    background: rgba(230, 244, 253, 0.7);
+    transform: translateY(-1px);
+}
+
 main {
     background: var(--surface-white);
     backdrop-filter: blur(3px);
@@ -1281,6 +1303,16 @@ select:focus-visible {
     .site-nav a {
         width: 100%;
         justify-content: center;
+        border-radius: 8px;
+    }
+
+    .site-nav .nav-logout-form {
+        width: 100%;
+        padding: 0;
+    }
+
+    .site-nav .nav-logout-button {
+        width: 100%;
         border-radius: 8px;
     }
 

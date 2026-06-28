@@ -4,8 +4,8 @@
 
 {% block content %}
 <section class="error-page">
-    <h1>Access denied</h1>
-    <p>You do not have permission to view this page.</p>
+    <h1>403 Forbidden</h1>
+    <p>{{ error.description }}</p>
     <a href="{{ url_for('auth.home') }}" class="button-ghost">Return home</a>
 </section>
 {% endblock %}

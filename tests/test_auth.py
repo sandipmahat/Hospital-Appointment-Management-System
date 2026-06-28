@@ -72,7 +72,7 @@ class AuthenticationTests(unittest.TestCase):
             self.assertEqual(session["user_id"], 4)
             self.assertTrue(session.permanent)
 
-        response = self.client.get("/logout")
+        response = self.client.post("/logout")
         self.assertEqual(response.status_code, 302)
         with self.client.session_transaction() as session:
             self.assertNotIn("user_id", session)
