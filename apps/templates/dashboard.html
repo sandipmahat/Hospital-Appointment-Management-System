@@ -3,20 +3,89 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <div class="dashboard-header">
-        <div>
-            <h1>Dashboard</h1>
-            <p>Welcome back! You are logged in.</p>
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Admin Dashboard</h1>
+            <p>Welcome back! Here's what's happening across sandyHUb.</p>
         </div>
-        <div class="dashboard-actions">
+        <div class="page-hero-actions">
+            <a class="button-ghost" href="{{ url_for('auth.manage_doctors') }}">Manage Doctors</a>
+            <a class="button-ghost" href="{{ url_for('auth.notification_log') }}">Notification Log</a>
+            <a class="button-ghost" href="{{ url_for('auth.totp_setup') }}">Two-Factor Auth</a>
             <a class="button-ghost" href="{{ url_for('auth.home') }}">Home</a>
-            <a class="button-secondary" href="{{ url_for('auth.logout') }}">Logout</a>
+            <form method="post" action="{{ url_for('auth.logout') }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="button-secondary">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    {% if password_reveal %}
+        <div class="card-panel" style="border:2px solid var(--accent, #1D9E75);">
+            <h2 style="margin-bottom:6px;">Password reset for {{ password_reveal.name }}</h2>
+            <p style="margin-bottom:18px;">This password is shown <strong>once, right now</strong> — it isn't stored anywhere and can't be recovered later. Copy it and hand it to {{ password_reveal.name }} before leaving this page.</p>
+            <div class="table-responsive">
+                <table>
+                    <tbody>
+                        <tr><td><strong>Name</strong></td><td>{{ password_reveal.name }}</td></tr>
+                        <tr><td><strong>Email</strong></td><td>{{ password_reveal.email }}</td></tr>
+                        <tr><td><strong>New Password</strong></td><td><code>{{ password_reveal.password }}</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="stat-grid">
+        <div class="stat-card stat-blue">
+            <span class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div>
+                <div class="stat-card-num">{{ total_users }}</div>
+                <div class="stat-card-label">Total Users</div>
+            </div>
+        </div>
+        <div class="stat-card stat-green">
+            <span class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+            <div>
+                <div class="stat-card-num">{{ total_appointments }}</div>
+                <div class="stat-card-label">Total Appointments</div>
+            </div>
+        </div>
+        <div class="stat-card stat-amber">
+            <span class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <div>
+                <div class="stat-card-num">{{ pending_count }}</div>
+                <div class="stat-card-label">Pending</div>
+            </div>
+        </div>
+        <div class="stat-card stat-purple">
+            <span class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+            <div>
+                <div class="stat-card-num">{{ approved_count }}</div>
+                <div class="stat-card-label">Approved</div>
+            </div>
+        </div>
+        <div class="stat-card stat-red">
+            <span class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span>
+            <div>
+                <div class="stat-card-num">{{ cancelled_count }}</div>
+                <div class="stat-card-label">Cancelled</div>
+            </div>
         </div>
     </div>
 
     {% if users %}
-        <section class="dashboard-table">
+        <section class="card-panel">
             <h2>All Users</h2>
+            <p class="field-hint">Account details are available for administration. Passwords are stored as secure hashes and are never displayed or recoverable.</p>
+            <form method="get" action="{{ url_for('auth.dashboard') }}" class="dashboard-filter-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="search" name="q" value="{{ user_query }}" placeholder="Search by name or email&hellip;">
+                <button type="submit" class="button-ghost">Search</button>
+                {% if user_query %}
+                    <a class="button-ghost" href="{{ url_for('auth.dashboard') }}">Clear</a>
+                {% endif %}
+            </form>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -26,6 +95,7 @@
                             <th>Email</th>
                             <th>Role</th>
                             <th>Created At</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,8 +104,24 @@
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>{{ user.role }}</td>
+                                <td><span class="role-badge role-{{ user.role }}">{{ user.role }}</span></td>
                                 <td>{{ user.created_at }}</td>
+                                <td>
+                                    {% if user.role != "admin" %}
+                                        <div style="display:inline-flex; gap:0.4rem;">
+                                            <form action="{{ url_for('auth.admin_reset_password', user_id=user.id) }}" method="post" onsubmit="return confirm('Reset the password for ' + {{ user.name|tojson }} + '? The new password will only be shown once.');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="action-btn">Reset Password</button>
+                                            </form>
+                                            <form action="{{ url_for('auth.admin_delete_user', user_id=user.id) }}" method="post" onsubmit="return confirm('Delete ' + {{ user.name|tojson }} + '\'s account? This cannot be undone.');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="action-btn cancel-btn">Delete</button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span class="field-hint">&mdash;</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -43,8 +129,24 @@
             </div>
         </section>
 
-        <section class="dashboard-table">
-            <h2>All Appointments</h2>
+        <section class="card-panel">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <h2 style="margin:0;">All Appointments {% if total_appointments %}<span class="table-count">({{ total_appointments }} total)</span>{% endif %}</h2>
+                <a class="button-ghost" href="{{ url_for('auth.export_appointments_csv') }}">Export CSV</a>
+            </div>
+            <form method="get" action="{{ url_for('auth.dashboard') }}" class="dashboard-filter-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="status">
+                    <option value="">All statuses</option>
+                    <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if status_filter == "approved" %}selected{% endif %}>Approved</option>
+                    <option value="cancelled" {% if status_filter == "cancelled" %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button type="submit" class="button-ghost">Filter</button>
+                {% if status_filter %}
+                    <a class="button-ghost" href="{{ url_for('auth.dashboard') }}">Clear</a>
+                {% endif %}
+            </form>
             {% if appointments %}
                 <div class="table-responsive">
                     <table>
@@ -72,14 +174,19 @@
                                     <td>{{ appt.department }}</td>
                                     <td>{{ appt.appointment_date }}</td>
                                     <td>{{ appt.appointment_time }}</td>
-                                    <td>{{ appt.status }}</td>
+                                    <td><span class="status-badge status-{{ appt.status }}">{{ appt.status }}</span></td>
                                     <td>{{ appt.created_at }}</td>
                                     <td>
-                                        <form action="{{ url_for('auth.admin_appointments') }}" method="post" style="display:inline-flex; gap:0.25rem;">
+                                        <form action="{{ url_for('auth.admin_appointments') }}" method="post" class="admin-appt-action-form" style="display:inline-flex; gap:0.4rem;">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <input type="hidden" name="appointment_id" value="{{ appt.id }}">
-                                            <button type="submit" name="action" value="approve">Approve</button>
-                                            <button type="submit" name="action" value="cancel">Cancel</button>
+                                            <input type="hidden" name="reason" class="cancel-reason-field">
+                                            {% if appt.status == "approved" %}
+                                                <button type="submit" name="action" value="remind" class="action-btn">Remind</button>
+                                            {% else %}
+                                                <button type="submit" name="action" value="approve" class="action-btn approve-btn">Approve</button>
+                                            {% endif %}
+                                            <button type="submit" name="action" value="cancel" class="action-btn cancel-btn cancel-with-reason-btn">Cancel</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -87,6 +194,17 @@
                         </tbody>
                     </table>
                 </div>
+                {% if total_pages and total_pages > 1 %}
+                    <nav class="pagination" aria-label="Appointments pagination">
+                        <a href="{{ url_for('auth.dashboard', page=page-1, status=status_filter or none, q=user_query or none) }}"
+                           class="button-ghost{% if page <= 1 %} disabled{% endif %}"
+                           aria-disabled="{{ 'true' if page <= 1 else 'false' }}">&larr; Previous</a>
+                        <span class="pagination-status">Page {{ page }} of {{ total_pages }}</span>
+                        <a href="{{ url_for('auth.dashboard', page=page+1, status=status_filter or none, q=user_query or none) }}"
+                           class="button-ghost{% if page >= total_pages %} disabled{% endif %}"
+                           aria-disabled="{{ 'true' if page >= total_pages else 'false' }}">Next &rarr;</a>
+                    </nav>
+                {% endif %}
             {% else %}
                 <p>No appointments have been booked yet.</p>
             {% endif %}
@@ -94,4 +212,25 @@
     {% else %}
         <p>No users found.</p>
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Cancelling asks the admin for an optional one-line reason before the
+  // form submits, so a patient sees more than a bare "cancelled" status -
+  // skipping the prompt (or leaving it blank) still cancels the appointment
+  // as before, it just won't carry a note.
+  document.querySelectorAll('.cancel-with-reason-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (event) {
+      var form = btn.closest('form');
+      var reasonField = form.querySelector('.cancel-reason-field');
+      var reason = window.prompt('Optional: why is this appointment being cancelled? Leave blank to skip.', '');
+      if (reason === null) {
+        event.preventDefault();
+        return;
+      }
+      reasonField.value = reason.trim();
+    });
+  });
+</script>
 {% endblock %}

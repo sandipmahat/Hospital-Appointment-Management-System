@@ -23,14 +23,19 @@ class AppointmentCrudTests(unittest.TestCase):
 
     def test_create_appointment_uses_authenticated_user(self):
         future_date = (date.today() + timedelta(days=7)).isoformat()
-        with patch("apps.controllers.authController.insert_row") as insert_row:
+        with patch("apps.controllers.authController.insert_row") as insert_row, patch(
+            "apps.controllers.authController.get_doctor_profiles",
+            return_value=[
+                {"name": "Dr. Rajesh Sharma", "department": "Cardiology", "specialty": "Cardiologist", "image": "doctor-koirala.jpg"}
+            ],
+        ), patch("apps.controllers.authController.select_all", return_value=[]):
             response = self.client.post(
                 "/book-appointment",
                 data={
                     "department": "Cardiology",
-                    "doctor_name": "Dr. Sharma",
+                    "doctor_name": "Dr. Rajesh Sharma",
                     "appointment_date": future_date,
-                    "appointment_time": "10:30",
+                    "appointment_time": "10:00",
                 },
             )
 
@@ -39,21 +44,68 @@ class AppointmentCrudTests(unittest.TestCase):
         self.assertEqual(record["user_id"], 12)
         self.assertEqual(record["department"], "Cardiology")
 
-    def test_past_appointment_is_rejected(self):
-        past_date = (date.today() - timedelta(days=1)).isoformat()
-        with patch("apps.controllers.authController.insert_row") as insert_row:
+    def test_booking_rejects_already_taken_slot(self):
+        future_date = (date.today() + timedelta(days=7)).isoformat()
+        with patch("apps.controllers.authController.insert_row") as insert_row, patch(
+            "apps.controllers.authController.get_doctor_profiles",
+            return_value=[
+                {"name": "Dr. Rajesh Sharma", "department": "Cardiology", "specialty": "Cardiologist", "image": "doctor-koirala.jpg"}
+            ],
+        ), patch("apps.controllers.authController.select_all", return_value=[{"appointment_time": "10:00"}]):
             response = self.client.post(
                 "/book-appointment",
                 data={
                     "department": "Cardiology",
-                    "doctor_name": "Dr. Sharma",
+                    "doctor_name": "Dr. Rajesh Sharma",
+                    "appointment_date": future_date,
+                    "appointment_time": "10:00",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"already booked", response.data)
+        insert_row.assert_not_called()
+
+    def test_past_appointment_is_rejected(self):
+        past_date = (date.today() - timedelta(days=1)).isoformat()
+        with patch("apps.controllers.authController.insert_row") as insert_row, patch(
+            "apps.controllers.authController.get_doctor_profiles",
+            return_value=[],
+        ):
+            response = self.client.post(
+                "/book-appointment",
+                data={
+                    "department": "Cardiology",
+                    "doctor_name": "Dr. Rajesh Sharma",
                     "appointment_date": past_date,
-                    "appointment_time": "10:30",
+                    "appointment_time": "10:00",
                 },
             )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Appointments cannot be booked in the past.", response.data)
+        insert_row.assert_not_called()
+
+    def test_booking_rejects_doctor_from_another_department(self):
+        future_date = (date.today() + timedelta(days=7)).isoformat()
+        with patch("apps.controllers.authController.insert_row") as insert_row, patch(
+            "apps.controllers.authController.get_doctor_profiles",
+            return_value=[
+                {"name": "Dr. Rajesh Sharma", "department": "Cardiology", "specialty": "Cardiologist", "image": "doctor-koirala.jpg"}
+            ],
+        ):
+            response = self.client.post(
+                "/book-appointment",
+                data={
+                    "department": "Neurology",
+                    "doctor_name": "Dr. Rajesh Sharma",
+                    "appointment_date": future_date,
+                    "appointment_time": "10:00",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"doctor from the selected department", response.data)
         insert_row.assert_not_called()
 
     def test_edit_denies_access_to_another_users_appointment(self):

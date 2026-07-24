@@ -1,30 +1,34 @@
-# Hospital Appointment Management System
+# Hospital Appointment Management System (sandyHUb)
 
-A Flask and MySQL web application for patients to create accounts, sign in,
-manage their profile, and create, view, edit, or delete hospital appointments.
-Administrators can review users and approve or cancel appointment requests.
+A Flask and MySQL web application for patients to sign in, manage their
+profile, and create, view, edit, or delete hospital appointments. Doctors
+can view their own schedule, and a single administrator can review users,
+approve or cancel appointments, and provision doctor accounts.
 
 This project was developed for the ST5041CMD coursework and demonstrates a
 complete client/server web application using HTML, CSS, JavaScript, Jinja2,
 Flask, Python, MySQL, authentication, sessions, security controls, and tests.
 
-## Features
+## Implemented Features
 
-- User registration with server-side validation and Werkzeug password hashing
-- Login, logout, secure sessions, and protected routes
-- Role-based administrator access
-- Patient profile management and password changes
-- Full appointment CRUD:
-  - Create an appointment
-  - View personal appointments
-  - Edit an owned appointment
-  - Delete an owned appointment
-- Administrator appointment approval and cancellation
-- Responsive Jinja2 templates and reusable static CSS/JavaScript
-- Flash messages and custom 403, 404, and 500 pages
-- CSRF protection for state-changing requests
-- Parameterized SQL queries and ownership checks
-- Automated authentication, authorization, CRUD, validation, and template tests
+1. Role-based login for patients, doctors, and the administrator.
+2. Automatic patient-account creation for a new email address.
+3. Secure password hashing; plaintext passwords are never stored.
+4. Login rate limiting after repeated failed attempts.
+5. Pre-seeded specialist doctors across six departments.
+6. Administrator-created doctor accounts, including custom doctors and departments.
+7. Admin user search with account name, email, role, and creation date.
+8. Safe admin password resets: a temporary password is shown once and then only its hash is stored.
+9. Admin account deletion for non-administrator users.
+10. Patient appointment booking with fixed daily time slots.
+11. Live availability checks that hide booked time slots.
+12. Doctor-and-department matching enforced in the browser and on the server.
+13. Patient appointment view, edit, and delete controls with ownership checks.
+14. Administrator appointment approval, cancellation, pagination, search, and CSV export.
+15. Doctor-only read-only schedules showing that doctor’s active appointments.
+16. Profile updates with current-password verification before a password change.
+17. CSRF protection, parameterized SQL queries, role checks, and custom error pages.
+18. Responsive templates with a mobile navigation menu and accessible form feedback.
 
 ## Technologies
 
@@ -142,6 +146,9 @@ filtering, and chronological sorting.
 | `SESSION_LIFETIME_MINUTES` | Login session duration |
 | `INIT_DB` | Automatically create/update tables |
 | `CSRF_ENABLED` | Enable CSRF validation |
+| `ADMIN_EMAIL` | Email for the single seeded administrator account |
+| `ADMIN_PASSWORD` | Initial password for the seeded administrator account (stored as a hash) |
+| `DOCTOR_SEED_PASSWORD` | Initial password for all six seeded doctor accounts (stored as a hash) |
 
 Never commit a real `.env` file or production credentials.
 
@@ -153,8 +160,10 @@ python run.py
 
 Then open `http://127.0.0.1:5000`.
 
-The development database initializer creates an administrator account when one
-does not exist. Change or remove this seeded account before production use.
+With `INIT_DB=true`, first startup seeds one administrator account (using
+`ADMIN_EMAIL`/`ADMIN_PASSWORD`) and six doctor accounts (using
+`DOCTOR_SEED_PASSWORD`, one per doctor in `DOCTOR_PROFILES`) if they don't
+already exist. Change these seeded credentials before any real deployment.
 
 ## Run Tests
 
@@ -193,19 +202,22 @@ Add screenshots here before submission:
 
 ## Known Limitations
 
-- Doctor and department records are currently maintained as controlled
-  application lists rather than through a separate administration interface.
+- The doctor and department roster is a controlled application list
+  (`DOCTOR_PROFILES` in `authController.py`) rather than a fully managed
+  database table with its own CRUD screens; the admin panel can only create
+  login accounts for the six doctors already in that list.
 - Email delivery, SMS reminders, and real telemedicine are demonstration
   features only.
 - The project uses direct PyMySQL queries instead of an ORM or migration tool.
 - Production deployment and HTTPS configuration are outside the coursework
   development setup.
+- "Forgot Password" on the login page is a static prompt to contact the
+  administrator, not an automated reset flow.
 
 ## Future Improvements
 
-- Normalize doctors and departments into dedicated managed tables.
-- Add appointment availability and double-booking prevention.
+- Normalize doctors and departments into dedicated managed database tables.
 - Add password reset emails and account verification.
-- Add pagination, search, and reporting to the administrator dashboard.
+- Add search and reporting to the administrator dashboard.
 - Add database migrations and broader integration/browser tests.
 - Deploy using a production WSGI server and HTTPS.

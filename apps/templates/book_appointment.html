@@ -2,15 +2,262 @@
 
 {% block title %}Book Appointment{% endblock %}
 
+{% block styles %}
+<style>
+  .book-page {
+    background: linear-gradient(180deg, #f0f8ff 0%, #f5f8fc 220px);
+  }
+
+  .book-hero {
+    background: linear-gradient(120deg, #185FA5 0%, #0C447C 55%, #1D9E75 130%);
+    padding: 56px 24px 84px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .book-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 12% 20%, rgba(255,255,255,0.14) 0%, transparent 40%),
+                       radial-gradient(circle at 88% 80%, rgba(255,255,255,0.12) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  .book-hero-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .book-hero-icon svg { width: 30px; height: 30px; }
+
+  .book-hero h1 {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .book-hero p {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1.02rem;
+    position: relative;
+  }
+
+  .book-layout {
+    max-width: 980px;
+    margin: -48px auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 24px;
+    align-items: start;
+    position: relative;
+  }
+
+  @media (max-width: 820px) {
+    .book-layout { grid-template-columns: 1fr; }
+  }
+
+  .book-form-card {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 32px;
+    box-shadow: 0 24px 60px rgba(12, 68, 124, 0.16);
+    border: 1px solid rgba(220, 233, 245, 0.9);
+  }
+
+  .book-field {
+    margin-bottom: 22px;
+  }
+
+  .book-field label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 700;
+    color: var(--dark, #042C53);
+    margin-bottom: 10px;
+  }
+
+  .book-field-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .book-field-icon svg { width: 16px; height: 16px; }
+
+  .icon-dept { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .icon-doctor { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+  .icon-date { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .icon-time { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+
+  .book-field select,
+  .book-field input {
+    border-radius: 14px;
+    border: 1.5px solid #dde9f5;
+    background: #f4faff;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .book-field select:focus,
+  .book-field input:focus {
+    outline: none;
+    border-color: #185FA5;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.14);
+  }
+
+  .slot-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #eef2f7;
+    color: #64748b;
+  }
+
+  .slot-hint.hint-ok {
+    background: #e3f7ee;
+    color: #0F6E56;
+  }
+
+  .slot-hint.hint-full {
+    background: #fdeceb;
+    color: #b3261e;
+  }
+
+  .book-submit-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .book-submit-btn {
+    background: linear-gradient(120deg, #185FA5, #1D9E75);
+    border: none;
+    box-shadow: 0 16px 32px rgba(24, 95, 165, 0.28);
+  }
+
+  .book-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 20px 38px rgba(24, 95, 165, 0.34);
+  }
+
+  .book-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .book-side-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 18px 40px rgba(12, 68, 124, 0.1);
+    border: 1px solid rgba(220, 233, 245, 0.9);
+  }
+
+  .book-side-card h3 {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    color: var(--dark, #042C53);
+    margin-bottom: 14px;
+    font-size: 1.05rem;
+  }
+
+  .book-perk {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .book-perk:last-child { margin-bottom: 0; }
+
+  .book-perk-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .book-perk-icon svg { width: 16px; height: 16px; }
+
+  .book-perk-icon.icon-blue { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .book-perk-icon.icon-green { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+  .book-perk-icon.icon-amber { background: linear-gradient(135deg, #f5a623, #d98a0f); }
+
+  .book-perk p { margin: 0; font-size: 0.88rem; color: #5a6a7a; line-height: 1.4; }
+  .book-perk strong { display: block; color: var(--dark, #042C53); font-size: 0.92rem; margin-bottom: 2px; }
+
+  .book-side-card.contact-card {
+    background: linear-gradient(135deg, #185FA5, #0C447C);
+    color: #fff;
+  }
+
+  .book-side-card.contact-card h3 { color: #fff; }
+  .book-side-card.contact-card p { color: rgba(255,255,255,0.85); font-size: 0.88rem; margin-bottom: 12px; }
+  .book-side-card.contact-card a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    background: rgba(255,255,255,0.16);
+    padding: 8px 14px;
+    border-radius: 999px;
+  }
+  .book-side-card.contact-card a:hover { background: rgba(255,255,255,0.26); }
+</style>
+{% endblock %}
+
 {% block content %}
-    <section class="section-padding">
-        <div class="container">
-            <h1>{{ "Edit Appointment" if editing else "Book Appointment" }}</h1>
-            <p>{{ "Update your booking details below." if editing else "Choose your preferred department, doctor, date, and time." }}</p>
-            <form method="post" class="form-card">
+<div class="book-page">
+    <div class="book-hero">
+        <div class="book-hero-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+        </div>
+        <h1>{{ "Edit Appointment" if editing else "Book Your Appointment" }}</h1>
+        <p>{{ "Update your booking details below." if editing else "Choose your preferred department, doctor, date, and time — takes less than a minute." }}</p>
+    </div>
+
+    <div class="book-layout">
+        <div class="book-form-card">
+            <form method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="form-row">
-                    <label for="department">Department</label>
+
+                <div class="book-field">
+                    <label for="department"><span class="book-field-icon icon-dept"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg></span>Department</label>
                     <select id="department" name="department" required>
                         <option value="">Select department</option>
                         {% for department in departments %}
@@ -18,30 +265,177 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-row">
-                    <label for="doctor_name">Doctor</label>
+
+                <div class="book-field">
+                    <label for="doctor_name"><span class="book-field-icon icon-doctor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>Doctor</label>
                     <select id="doctor_name" name="doctor_name" required>
                         <option value="">Select doctor</option>
                         {% for doctor in doctors %}
-                            <option value="{{ doctor }}" {% if appointment.doctor_name == doctor %}selected{% endif %}>{{ doctor }}</option>
+                            <option value="{{ doctor.name }}" data-department="{{ doctor.department }}" {% if appointment.doctor_name == doctor.name %}selected{% endif %}>{{ doctor.name }} &middot; {{ doctor.specialty }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-row">
-                    <label for="appointment_date">Appointment Date</label>
+
+                <div class="book-field">
+                    <label for="appointment_date"><span class="book-field-icon icon-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Appointment Date</label>
                     <input type="date" id="appointment_date" name="appointment_date" value="{{ appointment.appointment_date or '' }}" required>
                 </div>
-                <div class="form-row">
-                    <label for="appointment_time">Appointment Time</label>
-                    <input type="time" id="appointment_time" name="appointment_time" value="{{ appointment.appointment_time or '' }}" required>
+
+                <div class="book-field">
+                    <label for="appointment_time"><span class="book-field-icon icon-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Appointment Time</label>
+                    <select id="appointment_time" name="appointment_time" required>
+                        <option value="">Select department, doctor and date first</option>
+                        {% for slot in time_slots %}
+                            <option value="{{ slot }}" {% if appointment.appointment_time == slot %}selected{% endif %}>{{ time_slot_labels[slot] }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="slot-hint" id="slotHint">Times already booked for the selected doctor and date won't be shown.</span>
                 </div>
-                <div class="form-row">
-                    <button type="submit" class="btn-primary">{{ "Save Changes" if editing else "Book Appointment" }}</button>
+
+                <div class="book-submit-row">
+                    <button type="submit" class="button-primary book-submit-btn">{{ "Save Changes" if editing else "Book Appointment" }}</button>
                     {% if editing %}
                         <a href="{{ url_for('auth.my_appointments') }}" class="button-ghost">Cancel</a>
                     {% endif %}
                 </div>
             </form>
         </div>
-    </section>
+
+        <div class="book-side">
+            <div class="book-side-card">
+                <h3>Why patients book online</h3>
+                <div class="book-perk">
+                    <span class="book-perk-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                    <p><strong>No double-booking</strong>Only truly open time slots are ever shown for your chosen doctor and date.</p>
+                </div>
+                <div class="book-perk">
+                    <span class="book-perk-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+                    <p><strong>Instant confirmation</strong>See your booking right away under My Appointments &mdash; no waiting on hold.</p>
+                </div>
+                <div class="book-perk">
+                    <span class="book-perk-icon icon-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/><circle cx="12" cy="8" r="4"/></svg></span>
+                    <p><strong>Free to reschedule</strong>Change the date or time yourself any time before it's approved.</p>
+                </div>
+            </div>
+
+            <div class="book-side-card contact-card">
+                <h3>Need a hand?</h3>
+                <p>If you're not sure which department fits your symptoms, our team can point you in the right direction.</p>
+                <a href="{{ url_for('auth.contact') }}">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.61 16.92z"/></svg>
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var departmentSelect = document.getElementById('department');
+    var doctorSelect = document.getElementById('doctor_name');
+    var dateInput = document.getElementById('appointment_date');
+    var timeSelect = document.getElementById('appointment_time');
+    var hint = document.getElementById('slotHint');
+    var currentAppointmentId = {{ appointment.id | default('null') }};
+    var preselectedTime = {{ (appointment.appointment_time or '') | tojson }};
+    var doctorOptions = Array.prototype.slice.call(doctorSelect.options);
+
+    // Never let a patient pick a date before today.
+    var today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+
+    function setHint(text, state) {
+      hint.textContent = text;
+      hint.classList.remove('hint-ok', 'hint-full');
+      if (state) {
+        hint.classList.add(state);
+      }
+    }
+
+    function refreshAvailability() {
+      var doctor = doctorSelect.value;
+      var department = departmentSelect.value;
+      var appointmentDate = dateInput.value;
+
+      doctorOptions.forEach(function (option) {
+        if (!option.value) {
+          return;
+        }
+        var belongsToDepartment = !department || option.dataset.department === department;
+        option.hidden = !belongsToDepartment;
+        option.disabled = !belongsToDepartment;
+      });
+
+      if (doctor && department && doctorSelect.selectedOptions[0].dataset.department !== department) {
+        doctorSelect.value = '';
+        timeSelect.innerHTML = '<option value="">Select a doctor from the chosen department</option>';
+        setHint('Choose a doctor from the selected department.', 'hint-full');
+        return;
+      }
+
+      if (!doctor || !appointmentDate) {
+        return;
+      }
+
+      var url = "{{ url_for('auth.appointment_availability') }}"
+        + "?doctor_name=" + encodeURIComponent(doctor)
+        + "&appointment_date=" + encodeURIComponent(appointmentDate);
+      if (currentAppointmentId) {
+        url += "&exclude_id=" + currentAppointmentId;
+      }
+
+      setHint('Checking availability…', null);
+
+      fetch(url)
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data.error) {
+            setHint(data.error, 'hint-full');
+            return;
+          }
+          var previousValue = timeSelect.value || preselectedTime;
+          timeSelect.innerHTML = '';
+
+          if (data.available.length === 0) {
+            var noneOption = document.createElement('option');
+            noneOption.value = '';
+            noneOption.textContent = 'No times left that day — try another date';
+            timeSelect.appendChild(noneOption);
+            setHint('Fully booked for this doctor on this date.', 'hint-full');
+            return;
+          }
+
+          var placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.textContent = 'Select a time';
+          timeSelect.appendChild(placeholder);
+
+          data.available.forEach(function (slot) {
+            var option = document.createElement('option');
+            option.value = slot;
+            option.textContent = data.labels[slot];
+            if (slot === previousValue) {
+              option.selected = true;
+            }
+            timeSelect.appendChild(option);
+          });
+          setHint(data.available.length + ' time slot(s) available.', 'hint-ok');
+        })
+        .catch(function () {
+          setHint('Could not check availability right now.', 'hint-full');
+        });
+    }
+
+    [departmentSelect, doctorSelect, dateInput].forEach(function (el) {
+      el.addEventListener('change', refreshAvailability);
+    });
+
+    if (doctorSelect.value && dateInput.value) {
+      refreshAvailability();
+    }
+  })();
+</script>
 {% endblock %}

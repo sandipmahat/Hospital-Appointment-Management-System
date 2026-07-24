@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from apps import create_apps
 
 
@@ -12,6 +13,19 @@ class TemplateRenderingTests(unittest.TestCase):
                 "SECRET_KEY": "test-secret",
             }
         )
+        self.doctor_profiles = patch(
+            "apps.controllers.authController.get_doctor_profiles",
+            return_value=[
+                {
+                    "name": "Dr. Rajesh Sharma",
+                    "department": "Cardiology",
+                    "specialty": "Cardiologist",
+                    "image": "doctor-sharma.jpg",
+                }
+            ],
+        )
+        self.doctor_profiles.start()
+        self.addCleanup(self.doctor_profiles.stop)
 
     def test_home_page_renders_dynamic_jinja_content_and_escapes_user_input(self):
         with self.app.test_client() as client:
@@ -49,16 +63,21 @@ class TemplateRenderingTests(unittest.TestCase):
         self.assertIn("Mobile-first approach", body)
 
     def test_static_assets_are_served_from_static_folder(self):
-        with self.app.test_request_context():
-            rendered_template = self.app.jinja_env.get_template("index.html").render()
+        # The real homepage is medhub.html (rendered by GET /); there used to
+        # be an unreachable index.html left over from an earlier design that
+        # this test rendered directly instead of exercising the live route.
+        # It's been removed, along with the placeholder images it referenced.
+        with self.app.test_client() as client:
+            response = client.get("/")
+            rendered_template = response.get_data(as_text=True)
 
         expected_paths = [
             "/static/css/style.css",
+            "/static/css/medhub.css",
             "/static/js/events-alerts.js",
             "/static/js/form-validation.js",
-            "/static/images/home-hero.svg",
-            "/static/images/sanduk-ruit.png",
-            "/static/images/doctor-placeholder.svg",
+            "/static/images/hospital-photo.jpg",
+            "/static/images/doctor-sharma.jpg",
         ]
 
         for asset_path in expected_paths:
@@ -72,62 +91,17 @@ class TemplateRenderingTests(unittest.TestCase):
                 finally:
                     static_response.close()
 
-    def test_register_rejects_invalid_email_and_shows_flash_message(self):
-        class DummyCursor:
-            def execute(self, *args, **kwargs):
-                return None
-
-            def fetchone(self):
-                return None
-
-            def close(self):
-                return None
-
-        class DummyConnection:
-            def cursor(self):
-                return DummyCursor()
-
-            def commit(self):
-                raise AssertionError("commit should not be called for invalid input")
-
-            def close(self):
-                return None
-
-        from unittest.mock import patch
-
-        with patch("apps.controllers.authController.get_connection", return_value=DummyConnection()):
-            with self.app.test_client() as client:
-                response = client.post(
-                    "/register",
-                    data={
-                        "name": "Alice",
-                        "email": "not-an-email",
-                        "password": "123456",
-                        "confirmPassword": "123456",
-                    },
-                    follow_redirects=True,
-                )
-
-        self.assertEqual(response.status_code, 200)
-        body = response.get_data(as_text=True)
-        self.assertIn("Please enter a valid email address.", body)
-
-    def test_register_rejects_mismatched_password_confirmation(self):
+    def test_login_page_rejects_invalid_email_and_shows_flash_message(self):
         with self.app.test_client() as client:
             response = client.post(
-                "/register",
-                data={
-                    "name": "Alice",
-                    "email": "alice@example.com",
-                    "password": "123456",
-                    "confirmPassword": "abcdef",
-                },
+                "/login",
+                data={"login_as": "user", "email": "not-an-email", "password": "123456"},
                 follow_redirects=True,
             )
 
         self.assertEqual(response.status_code, 200)
         body = response.get_data(as_text=True)
-        self.assertIn("Passwords do not match.", body)
+        self.assertIn("Please enter a valid email address.", body)
 
 
 if __name__ == "__main__":

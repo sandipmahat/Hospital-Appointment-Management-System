@@ -39,3 +39,19 @@ def admin_required(view):
         return view(*args, **kwargs)
 
     return wrapped
+
+
+def doctor_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("user_id"):
+            flash("Please log in to continue.", "error")
+            return redirect(url_for("auth.login"))
+
+        if session.get("user_role") != "doctor":
+            flash("Doctor access required.", "danger")
+            return redirect(url_for("auth.home"))
+
+        return view(*args, **kwargs)
+
+    return wrapped

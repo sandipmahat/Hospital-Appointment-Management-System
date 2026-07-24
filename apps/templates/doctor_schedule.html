@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}My Schedule{% endblock %}
+
+{% block content %}
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>My Schedule</h1>
+            <p>Upcoming and past appointments booked with {{ doctor_name }}.</p>
+        </div>
+    </div>
+
+    {% if appointments %}
+        <section class="card-panel">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in appointments %}
+                            <tr>
+                                <td>{{ appt.patient_name }}</td>
+                                <td>{{ appt.patient_email }}</td>
+                                <td>{{ appt.department }}</td>
+                                <td>{{ appt.appointment_date }}</td>
+                                <td>{{ appt.appointment_time }}</td>
+                                <td><span class="status-badge status-{{ appt.status }}">{{ appt.status }}</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <div class="card-panel" style="text-align:center;">
+            <p>You have no booked appointments yet.</p>
+        </div>
+    {% endif %}
+
+    <section class="card-panel">
+        <h2>Block Out Time</h2>
+        <p class="field-hint">
+            Mark a whole day off, or just one slot, and patients won't be able to
+            book it - it'll drop out of the available times on the booking form
+            the same way an already-booked slot does.
+        </p>
+        <form method="post" action="{{ url_for('auth.add_doctor_unavailability') }}" class="dashboard-filter-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="date" name="unavailable_date" required>
+            <select name="time_slot">
+                <option value="">Whole day</option>
+                {% for slot in time_slots %}
+                    <option value="{{ slot }}">{{ time_slot_labels.get(slot, slot) }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="reason" placeholder="Reason (optional)" maxlength="255">
+            <button type="submit" class="button-ghost">Block This Out</button>
+        </form>
+
+        {% if unavailability %}
+            <div class="table-responsive" style="margin-top:18px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Slot</th>
+                            <th>Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in unavailability %}
+                            <tr>
+                                <td>{{ entry.unavailable_date }}</td>
+                                <td>{{ time_slot_labels.get(entry.time_slot, "Whole day") }}</td>
+                                <td>{{ entry.reason or "&mdash;" }}</td>
+                                <td>
+                                    <form method="post" action="{{ url_for('auth.delete_doctor_unavailability', entry_id=entry.id) }}" onsubmit="return confirm('Make this time bookable again?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="action-btn cancel-btn">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="margin-top:14px;">You haven't blocked out any upcoming days or slots.</p>
+        {% endif %}
+    </section>
+{% endblock %}

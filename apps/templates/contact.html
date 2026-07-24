@@ -2,265 +2,68 @@
 
 {% block title %}Contact{% endblock %}
 
-{% block content %}
-    <h1>Contact Management</h1>
-    <p>Manage your contacts and send messages.</p>
-    
-    <div class="contact-form-container">
-        <div class="form-actions" style="margin-bottom: 16px;">
-            <button type="button" id="toggleHelpBtn" class="button-secondary">Show help</button>
-        </div>
-        <div id="helpPanel" style="display: none; margin-bottom: 16px; padding: 12px 14px; border: 1px solid #d7dde6; border-radius: 12px; background: #f8fbff;">
-            <strong>Tip:</strong> Use the form to add a new contact, then use the note button to save a quick reminder for that person.
-        </div>
-        <h2>Add New Contact</h2>
-        <form id="contactForm" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="form-group">
-                <label for="contactName">Contact Name</label>
-                <input type="text" id="contactName" name="contactName"
-                       data-validate="required,name"
-                       placeholder="Enter contact name"
-                       required>
-            </div>
+{% block styles %}
+<style>
+  .contact-icon-card { display: flex; flex-direction: column; gap: 12px; }
 
-            <div class="form-group">
-                <label for="contactEmail">Email Address</label>
-                <input type="email" id="contactEmail" name="contactEmail"
-                       data-validate="required,email"
-                       placeholder="contact@example.com"
-                       required>
-            </div>
+  .contact-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
 
-            <div class="form-group select-wrapper">
-                <label for="contactType">Contact Type</label>
-                <select id="contactType" name="contactType" data-validate="required" required>
-                    <option value="">Choose a type</option>
-                    <option value="personal">Personal</option>
-                    <option value="work">Work</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+  .contact-icon-badge svg { width: 20px; height: 20px; }
 
-            <div class="form-group">
-                <label for="contactMessage">Message</label>
-                <textarea id="contactMessage" name="contactMessage"
-                          data-validate="required"
-                          placeholder="Your message here..."
-                          rows="5"
-                          required></textarea>
-            </div>
+  .contact-icon-card.icon-blue .contact-icon-badge { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .contact-icon-card.icon-green .contact-icon-badge { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+  .contact-icon-card.icon-amber .contact-icon-badge { background: linear-gradient(135deg, #f5a623, #d98a0f); }
 
-            <div class="form-actions">
-                <button type="submit" id="submitContactBtn" class="button-primary">Send Message</button>
-                <button type="button" id="clearContactBtn" class="button-secondary">Clear</button>
-            </div>
-        </form>
-    </div>
-
-    <hr style="margin: 32px 0; border: none; border-top: 1px solid #d7dde6;">
-
-    <h2>Your Contacts</h2>
-    <div id="contactsList">
-        <div class="contact-item">
-            <div>
-                <strong>John Doe</strong><br>
-                <small>john@example.com</small><br>
-                <small class="contact-note">No notes yet.</small>
-            </div>
-            <div class="contact-item-actions">
-                <button type="button" class="button-ghost add-note-btn" data-contact-name="John Doe">Add Note</button>
-                <button type="button" class="delete-btn" data-contact-name="John Doe">Delete</button>
-            </div>
-        </div>
-
-        <div class="contact-item">
-            <div>
-                <strong>Jane Smith</strong><br>
-                <small>jane@example.com</small><br>
-                <small class="contact-note">Follow up next week.</small>
-            </div>
-            <div class="contact-item-actions">
-                <button type="button" class="button-ghost add-note-btn" data-contact-name="Jane Smith">Add Note</button>
-                <button type="button" class="delete-btn" data-contact-name="Jane Smith">Delete</button>
-            </div>
-        </div>
-
-        <div class="contact-item">
-            <div>
-                <strong>Mike Johnson</strong><br>
-                <small>mike@example.com</small><br>
-                <small class="contact-note">No notes yet.</small>
-            </div>
-            <div class="contact-item-actions">
-                <button type="button" class="button-ghost add-note-btn" data-contact-name="Mike Johnson">Add Note</button>
-                <button type="button" class="delete-btn" data-contact-name="Mike Johnson">Delete</button>
-            </div>
-        </div>
-    </div>
+  .contact-cta {
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(24,95,165,0.08), rgba(29,158,117,0.08));
+    border: 1px solid rgba(24,95,165,0.14);
+  }
+</style>
 {% endblock %}
 
-{% block scripts %}
-<script>
-    function deleteContact(button, contactName) {
-        showDeleteConfirmation(contactName, function() {
-            const contactItem = button.closest('.contact-item');
-            if (!contactItem) return;
+{% block content %}
+    <section class="about-section">
+        <div class="page-hero">
+            <div class="page-hero-text">
+                <h1>Contact Us</h1>
+                <p>Reach the sandyHUb team for appointment help, billing questions, or general enquiries.</p>
+            </div>
+        </div>
 
-            contactItem.style.opacity = '0';
-            contactItem.style.transform = 'translateX(100%)';
-            contactItem.style.transition = 'all 0.3s ease';
+        <div class="responsive-card-grid">
+            <article class="responsive-card contact-icon-card icon-blue">
+                <span class="contact-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
+                <h3>Visit</h3>
+                <p>45 Medical Drive<br>Kathmandu 44600, Nepal</p>
+            </article>
+            <article class="responsive-card contact-icon-card icon-green">
+                <span class="contact-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.61 16.92z"/></svg></span>
+                <h3>Call</h3>
+                <p>+977 9749754230<br>Mon&ndash;Sat: 7:00 AM &ndash; 8:00 PM</p>
+            </article>
+            <article class="responsive-card contact-icon-card icon-amber">
+                <span class="contact-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg></span>
+                <h3>Email</h3>
+                <p>appointments@medhub.com.np</p>
+            </article>
+        </div>
 
-            setTimeout(() => {
-                contactItem.remove();
-                showAlert(`${contactName} has been deleted successfully.`, 'success');
-            }, 300);
-        });
-    }
-
-    function addNoteToContact(button) {
-        const contactItem = button.closest('.contact-item');
-        const contactName = button.dataset.contactName || 'this contact';
-        const noteElement = contactItem ? contactItem.querySelector('.contact-note') : null;
-        const currentNote = noteElement ? noteElement.textContent.replace('Note: ', '') : '';
-        const nextNote = prompt(`Add a note for ${contactName}:`, currentNote === 'No notes yet.' ? '' : currentNote);
-
-        if (nextNote !== null) {
-            const trimmedNote = nextNote.trim();
-            if (noteElement) {
-                noteElement.textContent = trimmedNote ? `Note: ${trimmedNote}` : 'No notes yet.';
-            }
-            if (trimmedNote) {
-                showAlert(`Note saved for ${contactName}.`, 'success');
-            }
-        }
-    }
-
-    function attachContactInteractions() {
-        document.querySelectorAll('.delete-btn').forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                deleteContact(this, this.dataset.contactName || 'this contact');
-            });
-        });
-
-        document.querySelectorAll('.add-note-btn').forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                addNoteToContact(this);
-            });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        attachFormValidation('contactForm');
-
-        const textarea = document.getElementById('contactMessage');
-        if (textarea) {
-            textarea.addEventListener('input', function() {
-                const length = this.value.length;
-                const counter = this.parentNode.querySelector('.char-counter') || document.createElement('span');
-                counter.className = 'char-counter';
-                counter.textContent = `${length} characters`;
-                if (!this.parentNode.querySelector('.char-counter')) {
-                    this.parentNode.appendChild(counter);
-                }
-            });
-        }
-
-        const form = document.getElementById('contactForm');
-        if (form) {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                if (!validateForm('contactForm')) {
-                    return;
-                }
-
-                const contactName = document.getElementById('contactName').value.trim();
-                const contactEmail = document.getElementById('contactEmail').value.trim();
-                const contactsList = document.getElementById('contactsList');
-                const newContact = document.createElement('div');
-                newContact.className = 'contact-item';
-                newContact.style.opacity = '0';
-                newContact.style.transform = 'translateX(-100%)';
-                newContact.style.transition = 'all 0.3s ease';
-
-                const contactDetails = document.createElement('div');
-                const contactNameElement = document.createElement('strong');
-                const contactEmailElement = document.createElement('small');
-                const contactNoteElement = document.createElement('small');
-                const contactActions = document.createElement('div');
-                const addNoteButton = document.createElement('button');
-                const deleteButton = document.createElement('button');
-
-                contactNameElement.textContent = contactName;
-                contactEmailElement.textContent = contactEmail;
-                contactNoteElement.className = 'contact-note';
-                contactNoteElement.textContent = 'No notes yet.';
-                contactActions.className = 'contact-item-actions';
-                addNoteButton.type = 'button';
-                addNoteButton.className = 'button-ghost add-note-btn';
-                addNoteButton.dataset.contactName = contactName;
-                addNoteButton.textContent = 'Add Note';
-                deleteButton.type = 'button';
-                deleteButton.className = 'delete-btn';
-                deleteButton.dataset.contactName = contactName;
-                deleteButton.textContent = 'Delete';
-
-                contactDetails.append(
-                    contactNameElement,
-                    document.createElement('br'),
-                    contactEmailElement,
-                    document.createElement('br'),
-                    contactNoteElement
-                );
-                contactActions.append(addNoteButton, deleteButton);
-                newContact.append(contactDetails, contactActions);
-
-                contactsList.appendChild(newContact);
-                setTimeout(() => {
-                    newContact.style.opacity = '1';
-                    newContact.style.transform = 'translateX(0)';
-                }, 10);
-
-                newContact.querySelector('.add-note-btn').addEventListener('click', function(event) {
-                    event.preventDefault();
-                    addNoteToContact(this);
-                });
-                newContact.querySelector('.delete-btn').addEventListener('click', function(event) {
-                    event.preventDefault();
-                    deleteContact(this, this.dataset.contactName || contactName);
-                });
-
-                showAlert(`${contactName} has been added to your contacts!`, 'success');
-                form.reset();
-                clearFormErrors('contactForm');
-            });
-        }
-
-        const clearButton = document.getElementById('clearContactBtn');
-        if (clearButton) {
-            clearButton.addEventListener('click', function(event) {
-                event.preventDefault();
-                if (confirm('Are you sure you want to clear all fields?')) {
-                    clearForm('contactForm');
-                    clearFormErrors('contactForm');
-                }
-            });
-        }
-
-        const toggleHelpButton = document.getElementById('toggleHelpBtn');
-        const helpPanel = document.getElementById('helpPanel');
-        if (toggleHelpButton && helpPanel) {
-            toggleHelpButton.addEventListener('click', function() {
-                const isHidden = helpPanel.style.display === 'none';
-                helpPanel.style.display = isHidden ? 'block' : 'none';
-                this.textContent = isHidden ? 'Hide help' : 'Show help';
-            });
-        }
-
-        attachContactInteractions();
-    });
-</script>
+        <div class="contact-cta">
+            Need to book, change, or cancel a visit? Sign in and use
+            <a href="{{ url_for('auth.book_appointment') }}">Book Appointment</a>
+            or <a href="{{ url_for('auth.my_appointments') }}">My Appointments</a> &mdash;
+            it's faster than calling in.
+        </div>
+    </section>
 {% endblock %}

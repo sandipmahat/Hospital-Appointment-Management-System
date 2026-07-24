@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Doctor Profile{% endblock %}
+
+{% block content %}
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Edit {{ doctor.name }}'s Profile</h1>
+            <p>Department, specialty, portrait, and bio shown on the doctor's cards and schedule page.</p>
+        </div>
+        <div class="page-hero-actions">
+            <a class="button-ghost" href="{{ url_for('auth.manage_doctors') }}">Back to Doctor Accounts</a>
+        </div>
+    </div>
+
+    <div class="card-panel profile-form-card" style="max-width:560px; margin:0 auto;">
+        <div class="table-responsive" style="margin-bottom:20px;">
+            <table>
+                <tbody>
+                    <tr><td><strong>Name</strong></td><td>{{ doctor.name }}</td></tr>
+                    <tr><td><strong>Email</strong></td><td>{{ doctor.email }}</td></tr>
+                    <tr><td><strong>Account Created</strong></td><td>{{ doctor.created_at }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" list="departmentSuggestions"
+                       value="{{ doctor.department or '' }}" required>
+                <datalist id="departmentSuggestions">
+                    {% for dept in departments %}
+                        <option value="{{ dept }}"></option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="specialty">Specialty</label>
+                <input type="text" id="specialty" name="specialty" value="{{ doctor.specialty or '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Portrait Filename</label>
+                <input type="text" id="image" name="image" value="{{ doctor.image or '' }}"
+                       placeholder="e.g. doctor-koirala.jpg">
+                <span class="field-hint">Must match a file already placed in static/images/. Leave blank to use the default avatar.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Short Bio</label>
+                <textarea id="bio" name="bio" rows="4" maxlength="500"
+                          placeholder="A sentence or two about this doctor's background and focus.">{{ doctor.bio or '' }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Save Profile</button>
+                <a href="{{ url_for('auth.manage_doctors') }}" class="button-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

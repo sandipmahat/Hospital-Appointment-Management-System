@@ -1,96 +1,46 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Login{% endblock %}
 
 {% block header %}{% endblock %}
 
 {% block styles %}
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
-
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --navy-deepest: #021d38;
-    --navy-deep: #042C53;
-    --navy-mid: #0C447C;
-    --blue-strong: #185FA5;
-    --blue-accent: #378ADD;
-    --blue-light: #85B7EB;
-    --blue-pale: #E6F1FB;
-    --green-bg: #EAF3DE;
-    --green-text: #3B6D11;
-    --green-border: #97C459;
-    --red-bg: #FCEBEB;
-    --red-text: #A32D2D;
-    --red-border: #F09595;
-    --text-primary: #1a1a1a;
-    --text-secondary: #5f5f5f;
-    --text-muted: #9a9a9a;
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f6f8;
-    --border-light: rgba(0,0,0,0.1);
-    --border-mid: rgba(0,0,0,0.18);
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
-    --shadow-card: 0 8px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
-  }
+  html, body { height: 100%; }
 
-  html, body {
-    height: 100%;
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    -webkit-font-smoothing: antialiased;
-  }
-
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .auth-screen {
     min-height: 100vh;
-    padding: 1.5rem;
-  }
-
-  .card {
-    display: flex;
-    width: 100%;
-    max-width: 860px;
-    min-height: 560px;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    position: relative;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .form-panel {
-    flex: 0 0 380px;
-    background: var(--bg-primary);
-    padding: 2.5rem 2.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .brand {
     display: flex;
     align-items: center;
-    gap: 11px;
-    margin-bottom: 2rem;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    background-image:
+      linear-gradient(160deg, rgba(4,44,83,0.82) 0%, rgba(12,68,124,0.72) 45%, rgba(29,158,117,0.68) 100%),
+      url("{{ url_for('static', filename='images/hospital-photo.jpg') }}");
+    background-size: cover;
+    background-position: center;
   }
 
-  .brand-icon {
-    width: 38px;
-    height: 38px;
-    background: var(--navy-mid);
+  .auth-brand {
+    position: absolute;
+    top: 24px;
+    left: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 21px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+  }
+
+  .auth-brand .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #185FA5, #0C447C);
     border-radius: 9px;
     display: flex;
     align-items: center;
@@ -98,614 +48,295 @@
     flex-shrink: 0;
   }
 
-  .brand-icon i {
-    font-size: 20px;
+  .auth-brand .logo-icon svg {
+    width: 20px;
     color: #fff;
   }
 
-  .brand-text h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--text-primary);
-    line-height: 1.1;
+  .auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 26px;
+    padding: 40px 32px;
+    box-shadow: 0 24px 60px rgba(2, 20, 40, 0.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    text-align: center;
   }
 
-  .brand-text p {
-    font-size: 10.5px;
-    color: var(--text-muted);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-
-  .form-heading {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--text-primary);
-    margin-bottom: 5px;
-  }
-
-  .form-sub {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 1.6rem;
-    line-height: 1.5;
-  }
-
-  .error-box {
-    display: none;
+  .auth-icon-ring {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--red-bg);
-    color: var(--red-text);
-    border: 0.5px solid var(--red-border);
-    border-radius: var(--radius-sm);
-    font-size: 12.5px;
-    padding: 8px 12px;
-    margin-bottom: 1rem;
+    justify-content: center;
+    margin: 0 auto 18px;
+    color: var(--dark, #042C53);
+    font-size: 30px;
   }
 
-  .error-box.visible { display: flex; }
-  .error-box i { font-size: 15px; flex-shrink: 0; }
-
-  .role-section { margin-bottom: 1.2rem; }
-
-  .field-label {
-    display: block;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 7px;
+  .auth-card h1 {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
   }
 
-  .role-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
+  .auth-card > p.auth-subtitle {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.78);
+    margin-bottom: 28px;
+  }
+
+  .role-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 
   .role-btn {
-    padding: 8px 4px;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    background: var(--bg-secondary);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11.5px;
-    color: var(--text-secondary);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--dark, #042C53);
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(2, 20, 40, 0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-
-  .role-btn i { font-size: 20px; }
 
   .role-btn:hover {
-    border-color: var(--blue-accent);
-    color: var(--blue-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(2, 20, 40, 0.26);
   }
 
-  .role-btn.active {
-    border: 1.5px solid var(--blue-accent);
-    background: var(--blue-pale);
-    color: var(--blue-strong);
+  .role-btn .role-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-light, #f0f6fc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
   }
 
-  .field { margin-bottom: 1rem; }
+  .role-btn.role-user .role-icon { color: #185FA5; }
+  .role-btn.role-doctor .role-icon { color: #1D9E75; }
+  .role-btn.role-admin .role-icon { color: #A32D2D; }
 
-  .input-wrap {
+  .auth-form-panel { display: none; }
+  .auth-form-panel.active { display: block; }
+  .role-picker.hidden { display: none; }
+
+  .auth-form-panel input {
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    margin-bottom: 14px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--text-dark, #1a2b40);
+    font-size: 14.5px;
+    font-family: var(--font-body, 'Open Sans', sans-serif);
+    outline: none;
+    box-shadow: 0 8px 18px rgba(2, 20, 40, 0.14);
+  }
+
+  .auth-form-panel input::placeholder { color: #8a97a8; }
+
+  .auth-form-panel input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55);
+  }
+
+  .auth-password-wrap {
     position: relative;
   }
 
-  .input-wrap .icon-left {
+  .auth-password-wrap input {
+    padding-right: 46px !important;
+  }
+
+  /* Hide the browser's own built-in password-reveal control (Edge/IE add
+     one automatically inside password fields) so it doesn't sit on top of
+     our custom toggle button below. */
+  .auth-password-wrap input[type="password"]::-ms-reveal,
+  .auth-password-wrap input[type="password"]::-ms-clear {
+    display: none;
+  }
+
+  button.auth-password-toggle {
     position: absolute;
-    left: 11px;
     top: 50%;
+    right: 4px;
     transform: translateY(-50%);
-    font-size: 16px;
-    color: var(--text-muted);
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  button.auth-password-toggle svg {
+    width: 19px;
+    height: 19px;
+    stroke: #000000;
     pointer-events: none;
   }
 
-  .input-wrap input {
+  button.auth-password-toggle:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .auth-forgot {
+    display: block;
+    text-align: right;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: -4px 0 18px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .auth-forgot:hover { text-decoration: underline; }
+
+  .auth-submit {
     width: 100%;
-    height: 40px;
-    padding: 0 38px 0 36px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    color: var(--text-primary);
-    background: var(--bg-secondary);
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    height: 50px;
+    border: none;
+    border-radius: 999px;
+    background: var(--dark, #042C53);
+    color: #fff;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 15.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
   }
 
-  .input-wrap input::placeholder { color: var(--text-muted); }
+  .auth-submit:hover { background: #0C447C; }
 
-  .input-wrap input:focus {
-    border-color: var(--blue-accent);
-    box-shadow: 0 0 0 3px rgba(55,138,221,0.14);
-    background: var(--bg-primary);
-  }
-
-  .eye-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+  .auth-back {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-muted);
-    font-size: 15px;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    transition: color 0.15s;
-  }
-
-  .eye-toggle:hover { color: var(--text-secondary); }
-
-  .forgot-row {
-    text-align: right;
-    margin-top: 5px;
-  }
-
-  .forgot-link {
-    font-size: 12px;
-    color: var(--blue-accent);
     text-decoration: none;
-    cursor: pointer;
   }
 
-  .forgot-link:hover { text-decoration: underline; }
+  .auth-back:hover { text-decoration: underline; }
 
-  .submit-btn {
-    width: 100%;
-    height: 42px;
-    background: var(--navy-mid);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 1.35rem;
-    transition: background 0.15s, transform 0.1s;
-  }
-
-  .submit-btn:hover { background: var(--blue-strong); }
-  .submit-btn:active { transform: scale(0.98); }
-  .submit-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
-
-  .submit-btn .spinner {
-    display: none;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .form-footer {
-    margin-top: 1.25rem;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .form-footer a {
-    color: var(--blue-accent);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .form-footer a:hover { text-decoration: underline; }
-
-  .visual-panel {
-    flex: 1;
-    background: var(--navy-deep);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2.5rem 2rem;
-    overflow: hidden;
-  }
-
-  .visual-bg { position: absolute; inset: 0; z-index: 0; }
-
-  .circle-dec {
-    position: absolute;
-    border-radius: 50%;
-    border: 0.5px solid rgba(255,255,255,0.07);
-  }
-
-  .circle-dec.c1 { width: 260px; height: 260px; top: -80px; right: -80px; }
-  .circle-dec.c2 { width: 180px; height: 180px; bottom: -50px; left: -50px; }
-  .circle-dec.c3 { width: 100px; height: 100px; top: 50%; left: 15%; opacity: 0.5; }
-
-  .grid-overlay {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .visual-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-  }
-
-  .visual-icon-ring {
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    background: rgba(55,138,221,0.15);
-    border: 1px solid rgba(133,183,235,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-  }
-
-  .visual-icon-ring i {
-    font-size: 34px;
-    color: var(--blue-light);
-  }
-
-  .visual-heading {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: #fff;
-    line-height: 1.25;
-    margin-bottom: 10px;
-  }
-
-  .visual-heading em {
-    font-style: italic;
-    color: var(--blue-light);
-  }
-
-  .visual-desc {
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.65;
-    max-width: 230px;
-    margin: 0 auto 2rem;
-  }
-
-  .stats {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-  }
-
-  .stat { text-align: center; }
-
-  .stat-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: #fff;
-    line-height: 1;
-  }
-
-  .stat-lbl {
-    font-size: 11px;
-    color: rgba(255,255,255,0.4);
-    margin-top: 4px;
-    letter-spacing: 0.03em;
-  }
-
-  .stat-div {
-    width: 0.5px;
-    height: 36px;
-    background: rgba(255,255,255,0.12);
-  }
-
-  .feature-pills {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 2rem;
-    width: 100%;
-    max-width: 240px;
-  }
-
-  .pill {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    background: rgba(255,255,255,0.05);
-    border: 0.5px solid rgba(255,255,255,0.1);
-    border-radius: 100px;
-    padding: 7px 14px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.65);
-  }
-
-  .pill i { font-size: 15px; color: var(--blue-light); }
-
-  .success-overlay {
-    display: none;
-    position: absolute;
-    inset: 0;
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    text-align: center;
-    padding: 2rem;
-    animation: fadeIn 0.3s ease both;
-  }
-
-  .success-overlay.visible { display: flex; }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .check-ring {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--green-bg);
-    border: 1px solid var(--green-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-  }
-
-  .check-ring i { font-size: 30px; color: var(--green-text); }
-
-  .success-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--text-primary);
-    margin-bottom: 7px;
-  }
-
-  .success-sub {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-  }
-
-  .progress-track {
-    width: 140px;
-    height: 3px;
-    background: var(--bg-secondary);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--blue-accent);
-    border-radius: 2px;
-    transition: width 1.6s linear;
-  }
-
-  @media (max-width: 680px) {
-    body { padding: 0; align-items: stretch; }
-
-    .card {
-      flex-direction: column;
-      border-radius: 0;
-      min-height: 100vh;
-      box-shadow: none;
-    }
-
-    .form-panel {
-      flex: none;
-      width: 100%;
-      padding: 2rem 1.5rem;
-      order: 2;
-    }
-
-    .visual-panel {
-      flex: none;
-      min-height: 200px;
-      order: 1;
-      padding: 2rem 1.5rem;
-    }
-
-    .feature-pills { display: none; }
-
-    .visual-desc { display: none; }
-
-    .stats { gap: 1rem; }
+  .auth-screen .message {
+    max-width: 400px;
+    margin: 0 auto 18px;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="card" role="main">
-  <div class="form-panel">
-    <div class="brand">
-      <div class="brand-icon" aria-hidden="true">
-        <i class="fa-solid fa-plus"></i>
+<div class="auth-screen">
+  <a class="auth-brand" href="{{ url_for('auth.home') }}">
+    <span class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402C1 4.022 3.022 2 5.191 2c1.312 0 2.677.651 3.809 1.86 1.132-1.209 2.497-1.86 3.809-1.86C15.978 2 18 4.022 18 7.191c0 4.105-5.37 8.863-11 14.402z"/></svg>
+    </span>
+    sandyHUb
+  </a>
+
+  <div class="auth-card">
+    <div id="rolePicker" class="role-picker{% if show_form %} hidden{% endif %}">
+      <div class="auth-icon-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+          <rect x="4" y="4" width="16" height="16" rx="3"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
       </div>
-      <div class="brand-text">
-        <h1>MediCare Portal</h1>
-        <p>Appointment Management</p>
-      </div>
+      <h1>Login</h1>
+      <p class="auth-subtitle">Choose how you'd like to sign in.</p>
+      <button type="button" class="role-btn role-user" data-role="user">
+        <span class="role-icon"><i class="fa-solid fa-user"></i></span>
+        Login as User
+      </button>
+      <button type="button" class="role-btn role-doctor" data-role="doctor">
+        <span class="role-icon"><i class="fa-solid fa-user-doctor"></i></span>
+        Login as Doctor
+      </button>
+      <button type="button" class="role-btn role-admin" data-role="admin">
+        <span class="role-icon"><i class="fa-solid fa-user-shield"></i></span>
+        Login as Admin
+      </button>
     </div>
 
-    <h2 class="form-heading">Welcome back</h2>
-    <p class="form-sub">Sign in to access your hospital dashboard and appointments.</p>
+    <div id="formPanel" class="auth-form-panel{% if show_form %} active{% endif %}">
+      <div class="auth-icon-ring" id="formIcon"><i class="fa-solid fa-user"></i></div>
+      <h1 id="formTitle">User Login</h1>
+      <p class="auth-subtitle" id="formSubtitle">Sign in to book and manage your appointments.</p>
 
-    <form id="loginForm" method="post" action="{{ url_for('auth.login') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" id="roleInput" name="role" value="Patient">
+      <form id="loginForm" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="login_as" id="loginAsField" value="{{ login_as or 'user' }}">
 
-      <div class="error-box" id="errorBox" role="alert" aria-live="polite">
-        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-        <span id="errorText">Invalid credentials. Please try again.</span>
-      </div>
-
-      <div class="role-section">
-        <label class="field-label">Sign in as</label>
-        <div class="role-grid" role="group" aria-label="Select your role">
-          <button class="role-btn active" type="button" onclick="selectRole(this, 'Patient')" aria-pressed="true">
-            <i class="fa-solid fa-user" aria-hidden="true"></i>
-            Patient
-          </button>
-          <button class="role-btn" type="button" onclick="selectRole(this, 'Doctor')" aria-pressed="false">
-            <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
-            Doctor
-          </button>
-          <button class="role-btn" type="button" onclick="selectRole(this, 'Admin')" aria-pressed="false">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            Admin
-          </button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="emailInput">Email address</label>
-        <div class="input-wrap">
-          <i class="fa-solid fa-envelope icon-left" aria-hidden="true"></i>
-          <input
-            type="email"
-            id="emailInput"
-            name="email"
-            placeholder="Enter your Gmail"
-            value="{{ submitted_email or '' }}"
-            autocomplete="email"
-            spellcheck="false"
-            data-validate="required,email"
-            required
-          />
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="passInput">Password</label>
-        <div class="input-wrap">
-          <i class="fa-solid fa-lock icon-left" aria-hidden="true"></i>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Email Address"
+          value="{{ submitted_email or '' }}"
+          autocomplete="email"
+          data-validate="required,email"
+          required
+        >
+        <div class="auth-password-wrap">
           <input
             type="password"
-            id="passInput"
+            id="password"
             name="password"
-            placeholder="Enter your password"
+            placeholder="Password"
             autocomplete="current-password"
-            data-validate="required,password"
+            data-validate="required"
             required
-          />
-          <button class="eye-toggle" type="button" id="togglePasswordBtn" aria-label="Show password">
-            <i class="fa-solid fa-eye" id="eyeIcon"></i>
+          >
+          <button type="button" class="auth-password-toggle" id="togglePasswordBtn" aria-label="Show password">
+            <svg id="togglePasswordIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19">
+              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
           </button>
         </div>
-        <div class="forgot-row">
-          <a class="forgot-link" href="#" onclick="handleForgot(event)">Forgot password?</a>
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-checkbox">
-          <input type="checkbox" id="rememberMe" name="rememberMe">
-          Remember me on this device
-        </label>
-      </div>
+        <a class="auth-forgot" href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
 
-      <button class="submit-btn" id="submitBtn" type="submit">
-        <div class="spinner" id="spinner"></div>
-        <i class="fa-solid fa-right-to-bracket" id="submitIcon" aria-hidden="true"></i>
-        <span id="submitLabel">Sign in securely</span>
-      </button>
+        <button type="submit" class="auth-submit" id="submitBtn">Login</button>
+      </form>
 
-      <p class="form-footer">
-        New patient? <a href="{{ url_for('auth.register') }}">Request access &rarr;</a>
-      </p>
-    </form>
-  </div>
-
-  <div class="visual-panel" aria-hidden="true">
-    <div class="visual-bg">
-      <div class="grid-overlay"></div>
-      <div class="circle-dec c1"></div>
-      <div class="circle-dec c2"></div>
-      <div class="circle-dec c3"></div>
-    </div>
-
-    <div class="visual-content">
-      <div class="visual-icon-ring">
-        <i class="fa-solid fa-calendar-check"></i>
-      </div>
-
-      <p class="visual-heading">
-        Your health,<br><em>managed simply</em>
-      </p>
-
-      <p class="visual-desc">
-        Book, track, and manage all your hospital appointments in one secure, unified place.
-      </p>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-num">24/7</div>
-          <div class="stat-lbl">Availability</div>
-        </div>
-        <div class="stat-div"></div>
-        <div class="stat">
-          <div class="stat-num">500+</div>
-          <div class="stat-lbl">Doctors</div>
-        </div>
-        <div class="stat-div"></div>
-        <div class="stat">
-          <div class="stat-num">100%</div>
-          <div class="stat-lbl">Secure</div>
-        </div>
-      </div>
-
-      <div class="feature-pills">
-        <div class="pill">
-          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-          Easy appointment booking
-        </div>
-        <div class="pill">
-          <i class="fa-solid fa-bell" aria-hidden="true"></i>
-          Automated reminders
-        </div>
-        <div class="pill">
-          <i class="fa-solid fa-file-medical" aria-hidden="true"></i>
-          Digital health records
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="success-overlay" id="successOverlay" role="status" aria-live="polite">
-    <div class="check-ring">
-      <i class="fa-solid fa-check"></i>
-    </div>
-    <h2 class="success-title">Login successful</h2>
-    <p class="success-sub">Redirecting to your <strong id="roleLabel">Patient</strong> dashboard&hellip;</p>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
+      <button type="button" class="auth-back" id="backBtn">&larr; Choose a different login type</button>
     </div>
   </div>
 </div>
@@ -713,143 +344,77 @@
 
 {% block scripts %}
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  (function () {
+    var rolePicker = document.getElementById('rolePicker');
+    var formPanel = document.getElementById('formPanel');
+    var loginAsField = document.getElementById('loginAsField');
+    var formIcon = document.getElementById('formIcon');
+    var formTitle = document.getElementById('formTitle');
+    var formSubtitle = document.getElementById('formSubtitle');
+
+    var ROLE_CONTENT = {
+      user: {
+        icon: '<i class="fa-solid fa-user"></i>',
+        title: 'User Login',
+        subtitle: "Sign in to book and manage your appointments. New here? Just enter an email and password to get started.",
+      },
+      doctor: {
+        icon: '<i class="fa-solid fa-user-doctor"></i>',
+        title: 'Doctor Login',
+        subtitle: 'For doctors with an account created by the hospital administrator.',
+      },
+      admin: {
+        icon: '<i class="fa-solid fa-user-shield"></i>',
+        title: 'Admin Login',
+        subtitle: 'Hospital administrator access only.',
+      },
+    };
+
+    function showForm(role) {
+      var content = ROLE_CONTENT[role] || ROLE_CONTENT.user;
+      loginAsField.value = role;
+      formIcon.innerHTML = content.icon;
+      formTitle.textContent = content.title;
+      formSubtitle.textContent = content.subtitle;
+      rolePicker.classList.add('hidden');
+      formPanel.classList.add('active');
+    }
+
+    document.querySelectorAll('.role-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        showForm(btn.dataset.role);
+      });
+    });
+
+    document.getElementById('backBtn').addEventListener('click', function () {
+      formPanel.classList.remove('active');
+      rolePicker.classList.remove('hidden');
+    });
+
+    var passwordInput = document.getElementById('password');
+    var toggleBtn = document.getElementById('togglePasswordBtn');
+    var toggleIcon = document.getElementById('togglePasswordIcon');
+
+    var EYE_OPEN =
+      '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    var EYE_CLOSED =
+      '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+    toggleBtn.addEventListener('click', function () {
+      var isHidden = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+      toggleIcon.innerHTML = isHidden ? EYE_OPEN : EYE_CLOSED;
+      toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+
+    // If the server re-rendered this page after a failed attempt, jump
+    // straight to the right role's form with its heading/icon instead of
+    // dumping the user back on the picker screen.
+    if (formPanel.classList.contains('active')) {
+      showForm(loginAsField.value);
+    }
+
     attachFormValidation('loginForm');
-
-    setupFormSubmission('loginForm', function(form) {
-      setLoading(true);
-      form.submit();
-    });
-
-    const rememberMeCheckbox = document.getElementById('rememberMe');
-    if (rememberMeCheckbox) {
-      rememberMeCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-          showAlert('Your login details will be remembered.', 'info');
-        }
-      });
-    }
-
-    addFocusHighlight('emailInput');
-    addFocusHighlight('passInput');
-    document.getElementById('togglePasswordBtn')?.addEventListener('click', togglePass);
-  });
-
-  let selectedRole = 'Patient';
-
-  function selectRole(btn, role) {
-    document.querySelectorAll('.role-btn').forEach(function(b) {
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed', 'false');
-    });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-    selectedRole = role;
-    const roleField = document.getElementById('roleInput');
-    if (roleField) {
-      roleField.value = role;
-    }
-    hideError();
-  }
-
-  function showError(msg) {
-    const box = document.getElementById('errorBox');
-    const text = document.getElementById('errorText');
-    if (box && text) {
-      text.textContent = msg;
-      box.classList.add('visible');
-    }
-  }
-
-  function hideError() {
-    const box = document.getElementById('errorBox');
-    if (box) {
-      box.classList.remove('visible');
-    }
-  }
-
-  function togglePass() {
-    const passInput = document.getElementById('passInput');
-    const eyeIcon = document.getElementById('eyeIcon');
-    const toggleButton = document.getElementById('togglePasswordBtn');
-    if (!passInput || !eyeIcon || !toggleButton) {
-      return;
-    }
-
-    if (passInput.type === 'password') {
-      passInput.type = 'text';
-      eyeIcon.className = 'fa-solid fa-eye-slash';
-      toggleButton.setAttribute('aria-label', 'Hide password');
-    } else {
-      passInput.type = 'password';
-      eyeIcon.className = 'fa-solid fa-eye';
-      toggleButton.setAttribute('aria-label', 'Show password');
-    }
-  }
-
-  function handleForgot(e) {
-    e.preventDefault();
-    alert('Password reset: please contact your hospital administrator or visit the help desk.');
-  }
-
-  function handleRegister(e) {
-    e.preventDefault();
-    window.location.href = "{{ url_for('auth.register') }}";
-  }
-
-  function setLoading(loading) {
-    const btn = document.getElementById('submitBtn');
-    const spinner = document.getElementById('spinner');
-    const icon = document.getElementById('submitIcon');
-    const label = document.getElementById('submitLabel');
-
-    if (btn && spinner && icon && label) {
-      if (loading) {
-        spinner.style.display = 'block';
-        icon.style.display = 'none';
-        label.textContent = 'Signing in…';
-        btn.disabled = true;
-      } else {
-        spinner.style.display = 'none';
-        icon.style.display = '';
-        label.textContent = 'Sign in securely';
-        btn.disabled = false;
-      }
-    }
-  }
-
-  function showSuccess() {
-    const overlay = document.getElementById('successOverlay');
-    const roleLabel = document.getElementById('roleLabel');
-    const progress = document.getElementById('progressFill');
-    if (roleLabel) roleLabel.textContent = selectedRole;
-    if (overlay) overlay.classList.add('visible');
-    if (progress) {
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          progress.style.width = '100%';
-        });
-      });
-    }
-  }
-
-  document.getElementById('emailInput')?.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      document.getElementById('passInput')?.focus();
-    }
-  });
-
-  document.getElementById('passInput')?.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      document.getElementById('loginForm')?.requestSubmit();
-    }
-  });
-
-  ['emailInput', 'passInput'].forEach(function(id) {
-    const field = document.getElementById(id);
-    if (field) {
-      field.addEventListener('input', hideError);
-    }
-  });
+  })();
 </script>
 {% endblock %}

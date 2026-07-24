@@ -8,6 +8,33 @@ from config import Config
 
 CSRF_SESSION_KEY = "csrf_token"
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+INSECURE_DEFAULT_SECRET_KEY = "dev-only-change-me"
+
+
+def _check_secret_key(app):
+    """Guard against running with the insecure placeholder SECRET_KEY.
+
+    Always warn loudly so it's impossible to miss in the logs. Only hard-fail
+    when the app is being run in a non-debug, non-testing configuration
+    (i.e. something closer to a real deployment), so the default coursework
+    `python run.py` (debug=True) workflow keeps working without extra setup.
+    """
+    if app.config.get("SECRET_KEY") != INSECURE_DEFAULT_SECRET_KEY:
+        return
+
+    app.logger.warning(
+        "SECRET_KEY is using the insecure placeholder value. Set a unique, "
+        "random SECRET_KEY in your .env file before deploying this app."
+    )
+
+    if not app.config.get("TESTING") and not app.debug:
+        raise RuntimeError(
+            "Refusing to start: SECRET_KEY is still the insecure default "
+            "('dev-only-change-me'). Set a real SECRET_KEY environment "
+            "variable (e.g. via `python -c \"import secrets; "
+            "print(secrets.token_hex(32))\"`) before running outside debug "
+            "mode."
+        )
 
 
 def generate_csrf_token():
@@ -25,10 +52,18 @@ def create_apps(test_config=None):
     if test_config:
         app.config.update(test_config)
 
+    _check_secret_key(app)
+
     app.jinja_env.autoescape = True
 
     if app.config["INIT_DB"]:
-        create_tables()
+        try:
+            create_tables()
+        except Exception as exc:
+            app.logger.warning(
+                "Database initialization failed during startup; continuing without DB setup: %s",
+                exc,
+            )
 
     app.register_blueprint(authRoutes.register())
 

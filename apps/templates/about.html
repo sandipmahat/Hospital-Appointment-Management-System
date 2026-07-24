@@ -2,84 +2,109 @@
 
 {% block title %}About Us{% endblock %}
 
+{% block styles %}
+<style>
+  .about-icon-card { display: flex; flex-direction: column; gap: 12px; }
+
+  .about-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .about-icon-badge svg { width: 20px; height: 20px; }
+
+  .about-icon-card.icon-blue .about-icon-badge { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .about-icon-card.icon-green .about-icon-badge { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+  .about-icon-card.icon-amber .about-icon-badge { background: linear-gradient(135deg, #f5a623, #d98a0f); }
+
+  .about-dept-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .about-dept-pill {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(24,95,165,0.08);
+    border: 1px solid rgba(24,95,165,0.16);
+    color: #0C447C;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
     <section class="about-section">
-        <div class="about-hero">
-            <h1>About Us</h1>
-            <p>Learn more about our company and what makes us different.</p>
-        </div>
-
-        <div class="responsive-design-section">
-            <div class="responsive-intro">
-                <p class="section-tag">Responsive design</p>
-                <h2>Responsive design matters</h2>
-                <p>Responsive design means a website adapts smoothly to phones, tablets, and desktops. It keeps content readable, navigation usable, and forms easy to complete across every screen size.</p>
-            </div>
-
-            <div class="responsive-card-grid">
-                <article class="responsive-card">
-                    <h3>Viewport meta tag</h3>
-                    <p>The viewport meta tag tells mobile browsers to render the page at the device width instead of a desktop width. Without it, pages often feel zoomed out and awkward on smaller screens.</p>
-                </article>
-                <article class="responsive-card">
-                    <h3>Media queries</h3>
-                    <p>Media queries let you change styles at specific breakpoints such as <code>@media (min-width: 768px)</code> for tablets or <code>@media (min-width: 1024px)</code> for desktops.</p>
-                </article>
-                <article class="responsive-card">
-                    <h3>Mobile-first approach</h3>
-                    <p>Starting with the smallest screens first keeps the experience focused, fast, and accessible. Larger screens then get enhanced layouts, wider navigation, and more spacious content.</p>
-                </article>
-            </div>
-
-            <div class="responsive-example">
-                <div class="responsive-example-copy">
-                    <h3>Making images, navbars, forms, and layouts responsive</h3>
-                    <p>Images should scale with <code>max-width: 100%</code>, navigation should wrap cleanly, forms should stack on narrow screens, and layouts should shift from one column to multiple columns as space grows.</p>
-                    <div class="code-block">
-                        <pre><code>img { max-width: 100%; height: auto; }
-
-@media (min-width: 768px) {
-  .layout { grid-template-columns: 1fr 1fr; }
-}</code></pre>
-                    </div>
-                </div>
-                <div class="responsive-preview" aria-label="Responsive page layout preview">
-                    <div class="preview-nav"></div>
-                    <div class="preview-body">
-                        <aside class="preview-sidebar">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </aside>
-                        <div class="preview-main">
-                            <div class="preview-hero"></div>
-                            <div class="preview-grid">
-                                <div class="preview-card"></div>
-                                <div class="preview-card"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="responsive-list">
-                <article class="responsive-list-item">
-                    <h3>Building a full responsive page layout</h3>
-                    <p>Combine flexible grid systems, thoughtful spacing, and progressive enhancements so the same structure works beautifully from a phone to a large monitor.</p>
-                </article>
-                <article class="responsive-list-item">
-                    <h3>Why it matters</h3>
-                    <p>Responsive design improves usability, boosts accessibility, and helps visitors stay engaged regardless of the device they use.</p>
-                </article>
+        <div class="page-hero">
+            <div class="page-hero-text">
+                <h1>About sandyHUb</h1>
+                <p>Nepal's role-based appointment platform for patients, doctors, and hospital administrators.</p>
             </div>
         </div>
 
-        <ul class="about-company-list">
-            {% for u in aboutcompany %}
-                {% if u.name == "softwarica" %}
-                    <li>{{ u.name }} - {{ u.address }}</li>
-                {% endif %}
+        <div class="stat-grid">
+            {% for s in stats %}
+                <div class="stat-card stat-{{ s.color }}">
+                    <span class="stat-card-icon">
+                        {% if s.color == "blue" %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        {% elif s.color == "green" %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        {% elif s.color == "amber" %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <div class="stat-card-num">{{ s.num }}</div>
+                        <div class="stat-card-label">{{ s.label }}</div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
+
+        <div class="responsive-intro" style="margin-top:40px;">
+            <p class="section-tag">Our mission</p>
+            <h2>Built to cut the wait, not the care</h2>
+            <p>Many small and mid-sized hospitals in Nepal still coordinate outpatient scheduling through paper diaries and phone calls, leaving patients unsure whether a slot is even free. sandyHUb replaces that with a single platform where a patient can book, view, edit, or cancel an outpatient appointment in minutes — no queueing at reception, no back-and-forth calls.</p>
+            <p><strong>Responsive design matters.</strong> A Viewport meta tag and a Mobile-first approach keep forms, cards, and appointment tables usable on phones, tablets, and desktop screens.</p>
+        </div>
+
+        <div class="responsive-card-grid">
+            <article class="responsive-card about-icon-card icon-blue">
+                <span class="about-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span>
+                <h3>For patients</h3>
+                <p>Sign in, browse doctors by department, and book one of seven fixed daily time slots — no double-bookings, ever. An account is created automatically the first time you sign in, no separate registration step.</p>
+            </article>
+            <article class="responsive-card about-icon-card icon-green">
+                <span class="about-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                <h3>For doctors</h3>
+                <p>Each doctor gets a read-only view of their own schedule — every upcoming appointment, patient, and time slot, without needing to manage bookings themselves.</p>
+            </article>
+            <article class="responsive-card about-icon-card icon-amber">
+                <span class="about-icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 1 5 5v3H7V7a5 5 0 0 1 5-5z"/><path d="M3 10h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z"/><path d="M12 14v4M10 16h4"/></svg></span>
+                <h3>For administrators</h3>
+                <p>One administrator account reviews every booking, approves or cancels appointments, and provisions doctor logins — with full visibility over every user on the platform.</p>
+            </article>
+        </div>
+
+        <div class="responsive-intro" style="margin-top:36px;">
+            <p class="section-tag">Departments</p>
+            <h2>Specialists across every major department</h2>
+            <div class="about-dept-pill-row">
+                {% for dept in departments %}
+                    <span class="about-dept-pill">{{ dept }}</span>
+                {% endfor %}
+            </div>
+        </div>
     </section>
 {% endblock %}

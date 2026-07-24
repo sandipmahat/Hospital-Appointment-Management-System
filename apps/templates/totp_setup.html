@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Two-Factor Authentication{% endblock %}
+
+{% block styles %}
+<style>
+  .totp-wrap { max-width: 640px; margin: 0 auto; }
+
+  .totp-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .totp-step + .totp-step {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(24, 95, 165, 0.12);
+  }
+
+  .totp-step-badge {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 700;
+    font-size: 17px;
+    color: #fff;
+    background: linear-gradient(135deg, #185FA5, #0C447C);
+  }
+
+  .totp-step-body { flex: 1; }
+
+  .totp-step-body h2 {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 1.15rem;
+    color: var(--dark, #042C53);
+    margin: 4px 0 6px;
+  }
+
+  .totp-kv {
+    margin-top: 14px;
+    border: 1px solid rgba(24, 95, 165, 0.16);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f7fbff;
+  }
+
+  .totp-kv-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .totp-kv-row + .totp-kv-row { border-top: 1px solid rgba(24, 95, 165, 0.1); }
+
+  .totp-kv-key {
+    font-weight: 700;
+    color: var(--dark, #042C53);
+    font-size: 0.9rem;
+  }
+
+  .totp-kv-val {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #1a2b40;
+    word-break: break-all;
+  }
+
+  .totp-secret {
+    display: inline-block;
+    background: #e8f2fd;
+    border: 1px dashed #185FA5;
+    border-radius: 8px;
+    padding: 6px 12px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: #0C447C;
+  }
+
+  .totp-code-input {
+    letter-spacing: 8px;
+    text-align: center;
+    font-size: 1.4rem !important;
+    font-weight: 700;
+    max-width: 220px;
+  }
+
+  .totp-status-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1D9E75, #0F6E56);
+    color: #fff;
+  }
+
+  .totp-status-badge svg { width: 32px; height: 32px; }
+
+  @media (max-width: 520px) {
+    .totp-kv-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Two-Factor Authentication</h1>
+            <p>Add a second step to admin login using any TOTP authenticator app such as Google Authenticator or Authy.</p>
+        </div>
+        <div class="page-hero-actions">
+            <a class="button-ghost" href="{{ url_for('auth.dashboard') }}">Back to Dashboard</a>
+        </div>
+    </div>
+
+    {% if enabled %}
+        <div class="card-panel totp-wrap" style="text-align:center;">
+            <div class="totp-status-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h2 style="margin-bottom:6px;">Two-factor authentication is on</h2>
+            <p class="field-hint" style="margin-bottom:22px;">
+                Every future admin login will ask for a 6-digit code from your
+                authenticator app after your password.
+            </p>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="disable">
+                <button type="submit" class="button-ghost" onclick="return confirm('Turn off two-factor authentication for this admin account?');">
+                    Turn Off Two-Factor Authentication
+                </button>
+            </form>
+        </div>
+    {% else %}
+        <div class="card-panel totp-wrap">
+            <div class="totp-step">
+                <span class="totp-step-badge">1</span>
+                <div class="totp-step-body">
+                    <h2>Add this account to your app</h2>
+                    <p class="field-hint">Enter this manually as a &ldquo;time-based&rdquo; key, or paste the otpauth URI.</p>
+                    <div class="totp-kv">
+                        <div class="totp-kv-row">
+                            <span class="totp-kv-key">Account</span>
+                            <span class="totp-kv-val">sandyHUb Admin</span>
+                        </div>
+                        <div class="totp-kv-row">
+                            <span class="totp-kv-key">Secret Key</span>
+                            <span class="totp-kv-val"><span class="totp-secret">{{ secret }}</span></span>
+                        </div>
+                        <div class="totp-kv-row">
+                            <span class="totp-kv-key">otpauth URI</span>
+                            <span class="totp-kv-val">{{ otpauth_uri }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="totp-step">
+                <span class="totp-step-badge">2</span>
+                <div class="totp-step-body">
+                    <h2>Confirm it worked</h2>
+                    <p class="field-hint">Enter the current 6-digit code your app is showing to finish turning this on.</p>
+                    <form method="post" style="margin-top:14px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="confirm">
+                        <div class="form-group">
+                            <label for="code">6-Digit Code</label>
+                            <input type="text" id="code" name="code" class="totp-code-input"
+                                   inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+                                   placeholder="000000" autocomplete="one-time-code" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button-primary">Enable Two-Factor Authentication</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

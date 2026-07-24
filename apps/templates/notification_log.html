@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Log{% endblock %}
+
+{% block content %}
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Notification Log</h1>
+            <p>Every appointment approval, cancellation, reminder, and password reset link the app has "sent" - stored here since no real mail server is configured for this build.</p>
+        </div>
+        <div class="page-hero-actions">
+            <a class="button-ghost" href="{{ url_for('auth.dashboard') }}">Back to Dashboard</a>
+        </div>
+    </div>
+
+    {% if notifications %}
+        <section class="card-panel">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sent At</th>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notifications %}
+                            <tr>
+                                <td style="white-space:nowrap;">{{ note.created_at }}</td>
+                                <td>{{ note.recipient_email }}</td>
+                                <td>{{ note.subject }}</td>
+                                <td style="max-width:420px;">{{ note.body }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <div class="card-panel" style="text-align:center;">
+            <p>No notifications have been recorded yet.</p>
+        </div>
+    {% endif %}
+{% endblock %}

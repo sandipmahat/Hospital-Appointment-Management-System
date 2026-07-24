@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Code{% endblock %}
+
+{% block content %}
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Enter Your Authentication Code</h1>
+            <p>Open your authenticator app and enter the current 6-digit code for sandyHUb Admin.</p>
+        </div>
+    </div>
+
+    <div class="card-panel profile-form-card" style="max-width:420px; margin:0 auto;">
+        <form id="verify2faForm" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="code">6-Digit Code</label>
+                <input type="text" id="code" name="code"
+                       inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+                       placeholder="123456" autocomplete="one-time-code" autofocus required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Verify &amp; Continue</button>
+                <a href="{{ url_for('auth.login') }}" class="button-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

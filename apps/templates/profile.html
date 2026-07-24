@@ -2,73 +2,192 @@
 
 {% block title %}Profile{% endblock %}
 
+{% block styles %}
+<style>
+  .profile-field label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 700;
+    color: var(--dark, #042C53);
+  }
+
+  .profile-field-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .profile-field-icon svg { width: 16px; height: 16px; }
+
+  .profile-field-icon.icon-blue { background: linear-gradient(135deg, #185FA5, #0C447C); }
+  .profile-field-icon.icon-green { background: linear-gradient(135deg, #1D9E75, #0F6E56); }
+  .profile-field-icon.icon-amber { background: linear-gradient(135deg, #f5a623, #d98a0f); }
+
+  .profile-form-card {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .profile-summary-card {
+    max-width: 560px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #185FA5, #1D9E75);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 800;
+    font-size: 1.5rem;
+    box-shadow: 0 10px 24px rgba(24, 95, 165, 0.28);
+  }
+
+  .profile-summary-name {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--dark, #042C53);
+    margin-bottom: 4px;
+  }
+
+  .profile-summary-email {
+    font-size: 0.9rem;
+    color: var(--muted-text, #64748b);
+    margin-bottom: 8px;
+  }
+
+  .profile-section-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--primary-blue, #1a8fe3);
+    margin: 26px 0 14px;
+  }
+
+  .profile-section-tag:first-of-type { margin-top: 4px; }
+
+  .profile-section-tag::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(220, 233, 245, 0.9);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-    <h1>Your Profile</h1>
-    <p>Update your account details and password below.</p>
-
-    <form id="profileForm" method="post" class="form-card">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="name"
-                   value="{{ user.name }}"
-                   data-validate="required,name"
-                   placeholder="Enter your full name"
-                   required>
+    <div class="page-hero">
+        <div class="page-hero-text">
+            <h1>Your Profile</h1>
+            <p>Update your account details and password below.</p>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email"
-                   value="{{ user.email }}"
-                   data-validate="required,email"
-                   placeholder="your.email@example.com"
-                   required>
+    <div class="card-panel profile-summary-card">
+        <span class="profile-avatar">{{ user.name[0]|upper if user.name else '?' }}</span>
+        <div>
+            <div class="profile-summary-name">{{ user.name }}</div>
+            <div class="profile-summary-email">{{ user.email }}</div>
+            {% if user.role %}
+                <span class="role-badge role-{{ user.role }}">{{ user.role }}</span>
+            {% endif %}
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="currentPassword">Current Password</label>
-            <div class="password-input-group">
-                <input type="password" id="currentPassword" name="currentPassword"
-                       placeholder="Enter current password">
-                <button type="button" id="toggleCurrentPasswordBtn" class="toggle-password-btn">
-                    Show
-                </button>
+    <div class="card-panel profile-form-card">
+        <form id="profileForm" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="profile-section-tag">Account Details</div>
+
+            <div class="form-group profile-field">
+                <label for="name"><span class="profile-field-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>Full Name</label>
+                <input type="text" id="name" name="name"
+                       value="{{ user.name }}"
+                       data-validate="required,name"
+                       placeholder="Enter your full name"
+                       required>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <div class="password-input-group">
-                <input type="password" id="newPassword" name="newPassword"
-                       placeholder="Leave blank to keep current password">
-                <button type="button" id="toggleNewPasswordBtn" class="toggle-password-btn">
-                    Show
-                </button>
+            <div class="form-group profile-field">
+                <label for="email"><span class="profile-field-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg></span>Email Address</label>
+                <input type="email" id="email" name="email"
+                       value="{{ user.email }}"
+                       data-validate="required,email"
+                       placeholder="your.email@example.com"
+                       required>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="confirmPassword">Confirm New Password</label>
-            <div class="password-input-group">
-                <input type="password" id="confirmPassword" name="confirmPassword"
-                       placeholder="Re-enter new password">
-                <button type="button" id="toggleConfirmPasswordBtn" class="toggle-password-btn">
-                    Show
-                </button>
+            <div class="profile-section-tag">Security</div>
+
+            <div class="form-group profile-field">
+                <label for="currentPassword"><span class="profile-field-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>Current Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="currentPassword" name="currentPassword"
+                           placeholder="Enter current password">
+                    <button type="button" id="toggleCurrentPasswordBtn" class="toggle-password-btn">
+                        Show
+                    </button>
+                </div>
+                <span class="field-hint">Required only if you're changing your password.</span>
             </div>
-        </div>
 
-        <div class="form-actions">
-            <button type="submit" class="button-primary">Save Changes</button>
-            <a href="/" class="button-ghost">Cancel</a>
-        </div>
-    </form>
+            <div class="form-group profile-field">
+                <label for="newPassword"><span class="profile-field-icon icon-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>New Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="newPassword" name="newPassword"
+                           placeholder="Leave blank to keep current password">
+                    <button type="button" id="toggleNewPasswordBtn" class="toggle-password-btn">
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group profile-field">
+                <label for="confirmPassword"><span class="profile-field-icon icon-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>Confirm New Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                           placeholder="Re-enter new password">
+                    <button type="button" id="toggleConfirmPasswordBtn" class="toggle-password-btn">
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Save Changes</button>
+                <a href="{{ url_for('auth.home') }}" class="button-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        attachFormValidation('profileForm');
         togglePasswordVisibility('currentPassword', 'toggleCurrentPasswordBtn');
         togglePasswordVisibility('newPassword', 'toggleNewPasswordBtn');
         togglePasswordVisibility('confirmPassword', 'toggleConfirmPasswordBtn');

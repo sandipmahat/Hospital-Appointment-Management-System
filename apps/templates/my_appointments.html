@@ -5,50 +5,70 @@
 {% block content %}
     <section class="section-padding">
         <div class="container">
-            <h1>My Appointments</h1>
-            <p>Review the status of your upcoming bookings.</p>
+            <div class="page-hero">
+                <div class="page-hero-text">
+                    <h1>My Appointments</h1>
+                    <p>Review the status of your upcoming bookings.</p>
+                </div>
+                <div class="page-hero-actions">
+                    <a class="button-ghost" href="{{ url_for('auth.book_appointment') }}">Book Another</a>
+                </div>
+            </div>
+
             {% if appointments %}
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Doctor</th>
-                                <th>Department</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Status</th>
-                                <th>Booked On</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for appt in appointments %}
+                <div class="card-panel">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td>{{ appt.id }}</td>
-                                    <td>{{ appt.doctor_name }}</td>
-                                    <td>{{ appt.department }}</td>
-                                    <td>{{ appt.appointment_date }}</td>
-                                    <td>{{ appt.appointment_time }}</td>
-                                    <td><span class="status-badge">{{ appt.status }}</span></td>
-                                    <td>{{ appt.created_at }}</td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <a href="{{ url_for('auth.edit_appointment', appointment_id=appt.id) }}" class="button-ghost">Edit</a>
-                                            <form method="post" action="{{ url_for('auth.delete_appointment', appointment_id=appt.id) }}" onsubmit="return confirm('Delete this appointment?');">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <button type="submit" class="delete-btn">Delete</button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    <th>ID</th>
+                                    <th>Doctor</th>
+                                    <th>Department</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Booked On</th>
+                                    <th>Actions</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for appt in appointments %}
+                                    <tr>
+                                        <td>{{ appt.id }}</td>
+                                        <td>{{ appt.doctor_name }}</td>
+                                        <td>{{ appt.department }}</td>
+                                        <td>{{ appt.appointment_date }}</td>
+                                        <td>{{ appt.appointment_time }}</td>
+                                        <td>
+                                            <span class="status-badge status-{{ appt.status }}">{{ appt.status }}</span>
+                                            {% if appt.status == "cancelled" and appt.cancellation_reason %}
+                                                <div class="field-hint" style="margin-top:4px;">{{ appt.cancellation_reason }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ appt.created_at }}</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="{{ url_for('auth.book_appointment', doctor_name=appt.doctor_name, department=appt.department) }}" class="button-ghost">Book Again</a>
+                                                {% if appt.status in ("pending", "cancelled") %}
+                                                    <a href="{{ url_for('auth.edit_appointment', appointment_id=appt.id) }}" class="button-ghost">Edit</a>
+                                                {% endif %}
+                                                <form method="post" action="{{ url_for('auth.delete_appointment', appointment_id=appt.id) }}" onsubmit="return confirm('Delete this appointment?');">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="action-btn cancel-btn">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             {% else %}
-                <p>You have no appointments booked yet.</p>
-                <a href="{{ url_for('auth.book_appointment') }}" class="btn-primary">Book Your First Appointment</a>
+                <div class="card-panel" style="text-align:center;">
+                    <p>You have no appointments booked yet.</p>
+                    <a href="{{ url_for('auth.book_appointment') }}" class="button-primary">Book Your First Appointment</a>
+                </div>
             {% endif %}
         </div>
     </section>
