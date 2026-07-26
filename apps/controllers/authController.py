@@ -11,7 +11,10 @@ import pyotp
 from flask import render_template, request, redirect, url_for, session, flash, current_app, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from apps.auth import login_user
-from apps.database import get_connection, insert_row, select_one, select_all, count_rows
+from apps.database import (
+    get_connection, insert_row, select_one, select_all, count_rows,
+    record_login_event,
+)
 from apps.errors import handle_db_errors
 from apps.rate_limit import is_rate_limited, record_failed_attempt, reset_attempts, seconds_until_retry
 
@@ -230,20 +233,20 @@ def _available_slots(doctor_name, appointment_date, exclude_id=None):
 def _validate_appointment(data, exclude_id=None):
     if not all(data.values()):
         return "All appointment fields are required."
-    try:
-        appointment_day = date.fromisoformat(data["appointment_date"])
-    except ValueError:
-        return "Please enter a valid appointment date."
-    if appointment_day < date.today():
-        return "Appointments cannot be booked in the past."
-    if data["appointment_time"] not in TIME_SLOTS:
-        return "Please choose one of the available appointment times."
     profiles = get_doctor_profiles()
     doctor_profiles = {profile["name"]: profile for profile in profiles}
     if data["department"] not in get_departments(profiles) or data["doctor_name"] not in doctor_profiles:
         return "Please select a valid department and doctor."
     if doctor_profiles[data["doctor_name"]]["department"] != data["department"]:
         return "Please choose a doctor from the selected department."
+    if data["appointment_time"] not in TIME_SLOTS:
+        return "Please choose one of the available appointment times."
+    try:
+        appointment_day = date.fromisoformat(data["appointment_date"])
+    except ValueError:
+        return "Please enter a valid appointment date."
+    if appointment_day < date.today():
+        return "Appointments cannot be booked in the past."
     taken = _booked_slots(data["doctor_name"], data["appointment_date"], exclude_id=exclude_id)
     if data["appointment_time"] in taken:
         return "That time slot is already booked for this doctor. Please choose another."
@@ -310,6 +313,19 @@ def _redirect_for_role(role):
     return redirect(url_for("auth.home"))
 
 
+def _audit_login(event_type, user=None, email=None, notes=None):
+    """Record a login event in MySQL without exposing credentials in the log."""
+    user = user or {}
+    record_login_event(
+        user.get("id"),
+        user.get("email") or email or "unknown",
+        event_type,
+        ip_address=request.remote_addr,
+        user_agent=request.user_agent.string[:255],
+        notes=notes,
+    )
+
+
 # ---------------- LOGIN FUNCTION (single, role-based) ----------------
 # This is the one and only authentication entry point in the app. There is
 # no separate registration page: a "user" login for an email that doesn't
@@ -365,8 +381,10 @@ def login():
                     session.clear()
                     login_user(user)
                     reset_attempts(rate_limit_key)
+                    _audit_login("login_success", user, notes="Doctor login")
                     flash("Login successful!", "success")
                     return _redirect_for_role("doctor")
+                _audit_login("login_failure", user, notes="Incorrect doctor password")
                 record_failed_attempt(rate_limit_key)
                 flash("Wrong email or password.", "error")
             else:
@@ -394,8 +412,10 @@ def login():
                 session.clear()
                 login_user(user)
                 reset_attempts(rate_limit_key)
+                _audit_login("login_success", user, notes="Administrator login")
                 flash("Login successful!", "success")
                 return _redirect_for_role("admin")
+            _audit_login("login_failure", user, email, notes="Invalid administrator credentials")
             record_failed_attempt(rate_limit_key)
             flash("Invalid administrator credentials.", "error")
             return render_template("login.html", submitted_email=email, login_as=login_as, show_form=True)
@@ -417,8 +437,10 @@ def login():
                 session.clear()
                 login_user(user)
                 reset_attempts(rate_limit_key)
+                _audit_login("login_success", user, notes="Patient login")
                 flash("Login successful!", "success")
                 return _redirect_for_role("user")
+            _audit_login("login_failure", user, notes="Incorrect patient password")
             record_failed_attempt(rate_limit_key)
             flash("Wrong email or password.", "error")
             return render_template("login.html", submitted_email=email, login_as=login_as, show_form=True)
@@ -444,8 +466,10 @@ def login():
             return render_template("login.html", submitted_email=email, login_as=login_as, show_form=True)
 
         session.clear()
-        login_user({"id": new_user_id, "name": email.split("@")[0], "email": email, "role": "user"})
+        new_user = {"id": new_user_id, "name": email.split("@")[0], "email": email, "role": "user"}
+        login_user(new_user)
         reset_attempts(rate_limit_key)
+        _audit_login("login_success", new_user, notes="New patient account created")
         flash("Welcome! Your account has been created.", "success")
         return _redirect_for_role("user")
 
@@ -493,6 +517,7 @@ def verify_admin_2fa():
             session.pop("pending_admin_id", None)
             session.clear()
             login_user(user)
+            _audit_login("login_success", user, notes="Administrator login with 2FA")
             flash("Login successful!", "success")
             return _redirect_for_role("admin")
         flash("That code didn't match. Please try again.", "error")
@@ -502,6 +527,11 @@ def verify_admin_2fa():
 
 # ---------------- LOGOUT ----------------
 def logout():
+    _audit_login(
+        "logout",
+        {"id": session.get("user_id"), "email": session.get("user_email")},
+        notes="User logged out",
+    )
     session.clear()
     flash("You have been logged out.", "success")
     return redirect(url_for("auth.login"))
