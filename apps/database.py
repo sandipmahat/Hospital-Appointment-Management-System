@@ -63,6 +63,30 @@ def get_connection():
     return _pool.connection()
 
 
+def record_login_event(user_id, username, event_type, ip_address=None,
+                       user_agent=None, notes=None):
+    """Persist one authentication event without affecting the user's request."""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """
+                INSERT INTO login_events
+                    (user_id, username, event_type, ip_address, user_agent, notes)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (user_id, username, event_type, ip_address, user_agent, notes),
+            )
+            conn.commit()
+        finally:
+            cursor.close()
+            conn.close()
+    except pymysql.MySQLError:
+        return False
+    return True
+
+
 def _bootstrap_connection():
     """A raw, unpooled connection used only during startup table creation,
     where the target database may not exist yet."""
@@ -318,6 +342,25 @@ def create_tables():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS login_events (
+                event_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NULL,
+                username VARCHAR(100) NOT NULL,
+                event_type ENUM('login_success', 'login_failure', 'logout',
+                                'password_reset', 'account_locked') NOT NULL,
+                ip_address VARCHAR(45) NULL,
+                user_agent VARCHAR(255) NULL,
+                device_type VARCHAR(50) NULL,
+                location VARCHAR(100) NULL,
+                event_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                notes VARCHAR(255) NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        _add_index(cursor, "login_events", "idx_login_events_user_time", "`user_id`, `event_time`")
+        _add_index(cursor, "login_events", "idx_login_events_type_time", "`event_type`, `event_time`")
 
         _add_index(cursor, "password_resets", "idx_password_resets_token", "`token`")
         _add_index(cursor, "doctor_unavailability", "idx_doctor_unavail_lookup", "`doctor_name`, `unavailable_date`")
