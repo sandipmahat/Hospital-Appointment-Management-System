@@ -226,7 +226,7 @@ Add screenshots here before submission:
 ## Repository and Demo
 
 - GitHub: https://github.com/sandipmahat/Hospital-Appointment-Management-System
-- YouTube/Google Drive demo: `ADD_DEMO_VIDEO_LINK_HERE`
+- YouTube demo: https://youtu.be/slcRqAq52u4
 
 ## Known Limitations
 
