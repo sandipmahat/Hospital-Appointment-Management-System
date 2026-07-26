@@ -1,5 +1,11 @@
 # Hospital Appointment Management System (sandyHUb)
 
+![Python](https://img.shields.io/badge/Python-3-blue)
+![Flask](https://img.shields.io/badge/Flask-web%20framework-black)
+![MySQL](https://img.shields.io/badge/MySQL-database-orange)
+![Tests](https://img.shields.io/badge/tests-unittest-green)
+![License](https://img.shields.io/badge/license-unspecified-lightgrey)
+
 A Flask and MySQL web application for patients to sign in, manage their
 profile, and create, view, edit, or delete hospital appointments. Doctors
 can view their own schedule, and a single administrator can review users,
@@ -8,6 +14,22 @@ approve or cancel appointments, and provision doctor accounts.
 This project was developed for the ST5041CMD coursework and demonstrates a
 complete client/server web application using HTML, CSS, JavaScript, Jinja2,
 Flask, Python, MySQL, authentication, sessions, security controls, and tests.
+
+## Contents
+
+- [Implemented Features](#implemented-features)
+- [Technologies](#technologies)
+- [Project Structure](#project-structure)
+- [Database Design](#database-design)
+- [Setup](#setup)
+- [Environment Variables](#environment-variables)
+- [Run the Application](#run-the-application)
+- [Run Tests](#run-tests)
+- [Security Controls](#security-controls)
+- [Screenshots](#screenshots)
+- [Repository and Demo](#repository-and-demo)
+- [Known Limitations](#known-limitations)
+- [Future Improvements](#future-improvements)
 
 ## Implemented Features
 
@@ -29,6 +51,9 @@ Flask, Python, MySQL, authentication, sessions, security controls, and tests.
 16. Profile updates with current-password verification before a password change.
 17. CSRF protection, parameterized SQL queries, role checks, and custom error pages.
 18. Responsive templates with a mobile navigation menu and accessible form feedback.
+19. Token-based "forgot password" flow: a one-time link is generated and delivered through an admin-visible Notification Log (no real mail server needed), and the confirmation message never reveals whether the email is registered.
+20. Optional TOTP-based two-factor authentication for the administrator account, with QR-code enrollment and verification before it's enabled.
+21. Homepage stats bar highlighting key numbers (patients served, specialist doctors, on-time rate, emergency support, experience, and clinic locations).
 
 ## Technologies
 
@@ -66,6 +91,7 @@ Hospital-Appointment-Management-System/
 ├── tests/
 ├── .env.example
 ├── config.py
+├── hospital_workbench_database.sql
 ├── requirements.txt
 └── run.py
 ```
@@ -185,6 +211,8 @@ modify a developer's MySQL data.
 - Administrator routes use role-based access decorators.
 - Jinja autoescaping protects rendered user data.
 - Secrets and database credentials are loaded from environment variables.
+- Optional TOTP two-factor authentication for the administrator account (`pyotp`), with a verification step before it can be enabled or disabled.
+- Password reset tokens expire after a configurable TTL and are single-use, and the request flow gives an identical response regardless of whether the email exists, preventing account enumeration.
 
 ## Screenshots
 
@@ -208,11 +236,12 @@ Add screenshots here before submission:
   login accounts for the six doctors already in that list.
 - Email delivery, SMS reminders, and real telemedicine are demonstration
   features only.
+- No real mail server is configured, so password reset links are delivered
+  through the internal Notification Log (admin-visible) rather than an
+  actual inbox.
 - The project uses direct PyMySQL queries instead of an ORM or migration tool.
 - Production deployment and HTTPS configuration are outside the coursework
   development setup.
-- "Forgot Password" on the login page is a static prompt to contact the
-  administrator, not an automated reset flow.
 
 ## Future Improvements
 
