@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch
 from apps import create_apps
 
 
@@ -13,19 +12,6 @@ class TemplateRenderingTests(unittest.TestCase):
                 "SECRET_KEY": "test-secret",
             }
         )
-        self.doctor_profiles = patch(
-            "apps.controllers.authController.get_doctor_profiles",
-            return_value=[
-                {
-                    "name": "Dr. Rajesh Sharma",
-                    "department": "Cardiology",
-                    "specialty": "Cardiologist",
-                    "image": "doctor-sharma.jpg",
-                }
-            ],
-        )
-        self.doctor_profiles.start()
-        self.addCleanup(self.doctor_profiles.stop)
 
     def test_home_page_renders_dynamic_jinja_content_and_escapes_user_input(self):
         with self.app.test_client() as client:

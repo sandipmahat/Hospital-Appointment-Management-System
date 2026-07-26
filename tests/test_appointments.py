@@ -68,10 +68,7 @@ class AppointmentCrudTests(unittest.TestCase):
 
     def test_past_appointment_is_rejected(self):
         past_date = (date.today() - timedelta(days=1)).isoformat()
-        with patch("apps.controllers.authController.insert_row") as insert_row, patch(
-            "apps.controllers.authController.get_doctor_profiles",
-            return_value=[],
-        ):
+        with patch("apps.controllers.authController.insert_row") as insert_row:
             response = self.client.post(
                 "/book-appointment",
                 data={
