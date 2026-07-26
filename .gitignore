@@ -36,4 +36,3 @@ Thumbs.db
 *.sqlite
 *.env
 .env
-.test-deps/
